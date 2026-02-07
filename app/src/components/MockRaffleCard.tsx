@@ -1,47 +1,50 @@
 'use client';
 
-import { PublicKey } from '@solana/web3.js';
-import { BN } from '@coral-xyz/anchor';
-import { Raffle, isActive, getStatusLabel } from '@/lib/idl/rafflebot';
+interface MockRaffle {
+  id: string;
+  name: string;
+  ticketPrice: number;
+  totalPot: number;
+  minPot: number;
+  totalTickets: number;
+  endTime: number;
+  status: 'active' | 'ended';
+  winner?: string;
+}
 
-interface RaffleCardProps {
-  publicKey: PublicKey;
-  raffle: Raffle;
+interface MockRaffleCardProps {
+  raffle: MockRaffle;
   onClick?: () => void;
 }
 
-// Format USDC amount (6 decimals)
-function formatUSDC(amount: BN): string {
-  const value = amount.toNumber() / 1_000_000;
-  return value.toLocaleString('en-US', { 
+function formatUSDC(amount: number): string {
+  return amount.toLocaleString('en-US', { 
     style: 'currency', 
     currency: 'USD',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 0,
   });
 }
 
-// Format time remaining
-function formatTimeRemaining(endTime: BN): string {
-  const now = Math.floor(Date.now() / 1000);
-  const end = endTime.toNumber();
-  const diff = end - now;
+function formatTimeRemaining(endTime: number): string {
+  const now = Date.now();
+  const diff = endTime - now;
 
   if (diff <= 0) return 'Ended';
 
-  const days = Math.floor(diff / 86400);
-  const hours = Math.floor((diff % 86400) / 3600);
-  const minutes = Math.floor((diff % 3600) / 60);
+  const days = Math.floor(diff / (86400 * 1000));
+  const hours = Math.floor((diff % (86400 * 1000)) / (3600 * 1000));
+  const minutes = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
 
   if (days > 0) return `${days}d ${hours}h`;
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m`;
 }
 
-export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
-  const active = isActive(raffle.status);
+export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
+  const active = raffle.status === 'active';
   const timeRemaining = formatTimeRemaining(raffle.endTime);
-  const progress = raffle.minPot.toNumber() > 0 
-    ? Math.min(100, (raffle.totalPot.toNumber() / raffle.minPot.toNumber()) * 100)
+  const progress = raffle.minPot > 0 
+    ? Math.min(100, (raffle.totalPot / raffle.minPot) * 100)
     : 100;
 
   return (
@@ -60,7 +63,7 @@ export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
           px-2 py-1 rounded-full text-xs font-medium
           ${active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}
         `}>
-          {getStatusLabel(raffle.status)}
+          {active ? 'Active' : 'Ended'}
         </span>
       </div>
 
@@ -80,7 +83,7 @@ export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
         </div>
         <div>
           <p className="text-gray-400 text-sm">{active ? 'Time Left' : 'Status'}</p>
-          <p className="text-white font-semibold">{active ? timeRemaining : getStatusLabel(raffle.status)}</p>
+          <p className="text-white font-semibold">{active ? timeRemaining : 'Completed'}</p>
         </div>
       </div>
 
@@ -108,32 +111,10 @@ export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
         <div className="mt-4 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
           <p className="text-yellow-400 text-sm font-medium">🏆 Winner</p>
           <p className="text-white font-mono text-xs truncate">
-            {raffle.winner.toBase58()}
+            {raffle.winner}
           </p>
         </div>
       )}
-    </div>
-  );
-}
-
-// Loading skeleton
-export function RaffleCardSkeleton() {
-  return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 animate-pulse">
-      <div className="flex justify-between items-start mb-4">
-        <div className="h-6 w-32 bg-gray-700 rounded" />
-        <div className="h-5 w-16 bg-gray-700 rounded-full" />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <div className="h-4 w-16 bg-gray-700 rounded mb-1" />
-          <div className="h-5 w-20 bg-gray-700 rounded" />
-        </div>
-        <div>
-          <div className="h-4 w-16 bg-gray-700 rounded mb-1" />
-          <div className="h-5 w-20 bg-gray-700 rounded" />
-        </div>
-      </div>
     </div>
   );
 }
