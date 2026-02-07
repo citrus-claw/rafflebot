@@ -1,84 +1,162 @@
-# RaffleBot 🎲
+# 🎟️ RaffleBot
 
-AI agent that creates and runs provably fair raffles on Solana.
+**AI-powered, provably fair raffles on Solana**
 
-Built for the [Colosseum Agent Hackathon](https://colosseum.com/agent-hackathon) (Feb 2-12, 2026).
+Built for the [Colosseum Agent Hackathon](https://www.colosseum.org/) — February 2026
 
-## What it does
+## 🎯 What is RaffleBot?
 
-Natural language commands like:
-> "Create a raffle for 100 USDC, 1 SOL entries, 24 hours"
+RaffleBot is an AI agent that creates and manages trustless raffles on Solana. Users interact via natural language, and the agent handles all blockchain complexity behind the scenes.
 
-→ Agent deploys on-chain raffle with Switchboard VRF for verifiable randomness.
+### Key Features
 
-## Why it matters
+- **🤖 Natural Language Interface** — "Create a raffle for 5 USDC tickets, 100 USDC minimum pot, lasting 48 hours"
+- **🔐 Provably Fair** — Winners selected using Switchboard VRF (verifiable random function)
+- **💰 Trustless Escrow** — All funds held in on-chain escrow until winner is drawn
+- **🎫 Transparent Odds** — Ticket ranges visible on-chain; anyone can verify
+- **💸 Automatic Refunds** — If minimum pot isn't met, participants get refunded
 
-Giveaways and raffles have a trust problem. Was it really random? Did the organizer pick their friend?
+## 🏗️ Architecture
 
-RaffleBot solves this:
-- **Verifiable randomness** via Switchboard VRF — anyone can verify the draw
-- **On-chain transparency** — all entries and draws are public
-- **Autonomous operation** — agent monitors and triggers draws automatically
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│   User (Chat)   │────▶│  RaffleBot Agent │────▶│ Solana Program  │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+                               │
+                               ▼
+                        ┌──────────────────┐
+                        │    Web UI        │
+                        │ (View & Buy)     │
+                        └──────────────────┘
+```
 
-## Tech Stack
+- **Agent**: Interprets natural language, calls on-chain program
+- **Program**: Anchor/Rust smart contract handling escrow, tickets, draws
+- **Web UI**: Next.js app for viewing raffles and buying tickets
+- **VRF**: Switchboard oracle for provable randomness
 
-| Component | Tool |
-|-----------|------|
-| Blockchain | Solana |
-| Randomness | Switchboard VRF |
-| Program | Anchor (Rust) |
-| Agent | OpenClaw (Citrus 🍊) |
-| Wallet | AgentWallet |
+## 🚀 Quick Start
 
-## Program Architecture
+### Prerequisites
+
+- Node.js 18+
+- Rust & Cargo
+- Solana CLI
+- Anchor CLI
+
+### Setup
+
+```bash
+# Clone and install
+git clone https://github.com/citrus-claw/rafflebot.git
+cd rafflebot
+pnpm install
+
+# Build program
+anchor build
+
+# Start web UI
+cd app && pnpm install && pnpm dev
+```
+
+### Agent CLI
+
+```bash
+# List all raffles
+npx tsx agent/raffle-cli.ts list
+
+# Create a new raffle
+npx tsx agent/raffle-cli.ts create "Weekend Giveaway" 5 100 10 48
+
+# Draw winner
+npx tsx agent/raffle-cli.ts draw <raffle_address>
+
+# Check status
+npx tsx agent/raffle-cli.ts status
+```
+
+## 📋 How It Works
+
+### 1. Create Raffle
+Agent creates on-chain raffle with:
+- Ticket price (USDC)
+- Minimum pot threshold
+- Max tickets per wallet
+- End time
+
+### 2. Buy Tickets
+Users connect wallet on web UI and purchase tickets.
+- USDC transferred to escrow PDA
+- Entry account tracks ticket range
+- Each ticket = equal chance to win
+
+### 3. Draw Winner
+After deadline, agent triggers draw:
+- VRF generates random number
+- Winning ticket index selected
+- Result stored on-chain (verifiable)
+
+### 4. Claim Prize
+Winner claims via web UI:
+- 90% of pot to winner
+- 10% platform fee
+- If threshold not met: full refunds
+
+## 🔧 Technical Details
+
+### Program (Solana/Anchor)
+
+| Instruction | Description |
+|-------------|-------------|
+| `create_raffle` | Initialize new raffle with parameters |
+| `buy_tickets` | Purchase tickets, transfer USDC to escrow |
+| `draw_winner` | Select winner using VRF randomness |
+| `claim_prize` | Winner withdraws funds |
+| `cancel_raffle` | Authority cancels, enables refunds |
+| `claim_refund` | Participants reclaim funds |
 
 ### Accounts
 
-- **Raffle**: Stores raffle config, entries, and winner
-- **Entry**: Records each participant's entries
+- **Raffle**: Stores raffle config, pot, ticket count, winner
+- **Entry**: Per-user ticket ownership (PDA per raffle+buyer)
+- **Escrow**: Token account holding pot (PDA per raffle)
 
-### Instructions
+### Fee Structure
 
-1. `create_raffle` - Create a new raffle with prize, entry cost, duration
-2. `buy_entries` - Purchase entries into an active raffle  
-3. `draw_winner` - Draw winner using VRF randomness (after end time)
-4. `claim_prize` - Winner claims their prize
+- 90% → Winner
+- 10% → Platform (covers VRF costs, development)
 
-### PDAs
+## 🌐 Deployed
+
+- **Network**: Solana Devnet
+- **Program ID**: `HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n`
+- **Test USDC**: `2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2`
+
+## 📁 Project Structure
 
 ```
-raffle = [b"raffle", authority, name]
-entry = [b"entry", raffle, buyer]
+rafflebot/
+├── programs/rafflebot/    # Anchor program (Rust)
+├── app/                   # Next.js web UI
+├── agent/                 # Agent tools & CLI
+├── scripts/               # Dev scripts
+├── tests/                 # Anchor tests
+└── docs/                  # Architecture docs
 ```
 
-## Development
+## 🎬 Demo
 
-```bash
-# Build
-anchor build
+[Demo video coming soon]
 
-# Test
-anchor test
+## 👥 Team
 
-# Deploy to devnet
-anchor deploy --provider.cluster devnet
-```
+- **Citrus** 🍊 — AI Agent (yes, really)
+- **CJC** — Human collaborator
 
-## Roadmap
-
-- [x] Core raffle program (create, buy, draw, claim)
-- [ ] Switchboard VRF integration
-- [ ] Natural language agent interface
-- [ ] SPL token support (USDC, etc.)
-- [ ] Discord/Telegram bot
-- [ ] Demo frontend
-
-## Agent
-
-Built by **citrus** 🍊 — Agent #817 on Colosseum
-
-Claim URL: https://colosseum.com/agent-hackathon/claim/81550a12-cd82-4427-b036-bb00ca319068
-
-## License
+## 📜 License
 
 MIT
+
+---
+
+*Built with 🍊 by Citrus for the Colosseum Agent Hackathon*
