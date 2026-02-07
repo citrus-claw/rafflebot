@@ -1,0 +1,877 @@
+{
+  "address": "RafF1eBotxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "metadata": {
+    "name": "rafflebot",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "AI agent that creates and runs provably fair raffles on Solana"
+  },
+  "instructions": [
+    {
+      "name": "buy_tickets",
+      "docs": [
+        "Buy tickets for a raffle"
+      ],
+      "discriminator": [
+        48,
+        16,
+        122,
+        137,
+        24,
+        214,
+        198,
+        58
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              },
+              {
+                "kind": "account",
+                "path": "buyer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyer_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_mint"
+        },
+        {
+          "name": "buyer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "num_tickets",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "cancel_raffle",
+      "docs": [
+        "Cancel raffle and enable refunds (authority only, or auto after deadline if threshold not met)"
+      ],
+      "discriminator": [
+        135,
+        191,
+        223,
+        141,
+        192,
+        186,
+        234,
+        254
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "Can be authority OR anyone (if deadline passed + threshold not met)"
+          ],
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_prize",
+      "docs": [
+        "Claim prize (winner calls this with their entry)"
+      ],
+      "discriminator": [
+        157,
+        233,
+        139,
+        121,
+        246,
+        62,
+        234,
+        235
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "winner_entry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              },
+              {
+                "kind": "account",
+                "path": "winner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "winner_token_account",
+          "writable": true
+        },
+        {
+          "name": "platform_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_mint"
+        },
+        {
+          "name": "winner",
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_refund",
+      "docs": [
+        "Claim refund (for cancelled raffles)"
+      ],
+      "discriminator": [
+        15,
+        16,
+        30,
+        161,
+        255,
+        228,
+        97,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              },
+              {
+                "kind": "account",
+                "path": "buyer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyer_token_account",
+          "writable": true
+        },
+        {
+          "name": "platform_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_mint"
+        },
+        {
+          "name": "buyer",
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_raffle",
+      "docs": [
+        "Create a new raffle (agent-only in practice, but permissionless on-chain)"
+      ],
+      "discriminator": [
+        226,
+        206,
+        159,
+        34,
+        213,
+        207,
+        98,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_mint",
+          "docs": [
+            "The SPL token mint (e.g., USDC)"
+          ]
+        },
+        {
+          "name": "platform_wallet",
+          "docs": [
+            "Platform wallet to receive fees"
+          ]
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "ticket_price",
+          "type": "u64"
+        },
+        {
+          "name": "min_pot",
+          "type": "u64"
+        },
+        {
+          "name": "max_per_wallet",
+          "type": "u32"
+        },
+        {
+          "name": "end_time",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "draw_winner",
+      "docs": [
+        "Draw winner using VRF randomness (called by authority after deadline)"
+      ],
+      "discriminator": [
+        250,
+        103,
+        118,
+        147,
+        219,
+        235,
+        169,
+        220
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "raffle"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "randomness",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Entry",
+      "discriminator": [
+        63,
+        18,
+        152,
+        113,
+        215,
+        246,
+        221,
+        250
+      ]
+    },
+    {
+      "name": "Raffle",
+      "discriminator": [
+        143,
+        133,
+        63,
+        173,
+        138,
+        10,
+        142,
+        200
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidEndTime",
+      "msg": "End time must be in the future"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidTicketPrice",
+      "msg": "Ticket price must be greater than 0"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidMinPot",
+      "msg": "Minimum pot must be greater than 0"
+    },
+    {
+      "code": 6003,
+      "name": "MinPotTooLow",
+      "msg": "Minimum pot must be >= ticket price"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidName",
+      "msg": "Name must be 1-32 characters"
+    },
+    {
+      "code": 6005,
+      "name": "RaffleNotActive",
+      "msg": "Raffle is not active"
+    },
+    {
+      "code": 6006,
+      "name": "RaffleClosed",
+      "msg": "Raffle has ended"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidTicketCount",
+      "msg": "Invalid ticket count"
+    },
+    {
+      "code": 6008,
+      "name": "MaxTicketsExceeded",
+      "msg": "Maximum tickets per wallet exceeded"
+    },
+    {
+      "code": 6009,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6010,
+      "name": "RaffleNotEnded",
+      "msg": "Raffle has not ended yet"
+    },
+    {
+      "code": 6011,
+      "name": "NoTickets",
+      "msg": "No tickets sold"
+    },
+    {
+      "code": 6012,
+      "name": "ThresholdNotMet",
+      "msg": "Minimum pot threshold not met"
+    },
+    {
+      "code": 6013,
+      "name": "DrawNotComplete",
+      "msg": "Draw not complete"
+    },
+    {
+      "code": 6014,
+      "name": "NoWinnerDrawn",
+      "msg": "No winner drawn"
+    },
+    {
+      "code": 6015,
+      "name": "NotWinner",
+      "msg": "Not the winner"
+    },
+    {
+      "code": 6016,
+      "name": "CannotCancel",
+      "msg": "Cannot cancel raffle"
+    },
+    {
+      "code": 6017,
+      "name": "RaffleNotCancelled",
+      "msg": "Raffle is not cancelled"
+    },
+    {
+      "code": 6018,
+      "name": "NotEntryOwner",
+      "msg": "Not the entry owner"
+    },
+    {
+      "code": 6019,
+      "name": "AlreadyRefunded",
+      "msg": "Already refunded"
+    }
+  ],
+  "types": [
+    {
+      "name": "Entry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "raffle",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyer",
+            "type": "pubkey"
+          },
+          {
+            "name": "start_ticket_index",
+            "type": "u32"
+          },
+          {
+            "name": "num_tickets",
+            "type": "u32"
+          },
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "refunded",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Raffle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "token_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "escrow",
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "ticket_price",
+            "type": "u64"
+          },
+          {
+            "name": "min_pot",
+            "type": "u64"
+          },
+          {
+            "name": "max_per_wallet",
+            "type": "u32"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "total_tickets",
+            "type": "u32"
+          },
+          {
+            "name": "total_pot",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "RaffleStatus"
+              }
+            }
+          },
+          {
+            "name": "winner",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "winning_ticket",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "randomness",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "escrow_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RaffleStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "DrawComplete"
+          },
+          {
+            "name": "Claimed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    }
+  ]
+}

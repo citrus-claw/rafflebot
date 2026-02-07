@@ -29,8 +29,7 @@ export function useProgram() {
   const program = useMemo(() => {
     if (!provider) return null;
     setProvider(provider);
-    // @ts-ignore - IDL type mismatch, will fix when using generated IDL
-    return new Program(IDL, PROGRAM_ID, provider);
+    return new Program(IDL, provider);
   }, [provider]);
 
   return { program, provider, connection, wallet };
@@ -49,8 +48,7 @@ export function useProgramReadonly() {
     const provider = new AnchorProvider(connection, dummyWallet as any, {
       commitment: 'confirmed',
     });
-    // @ts-ignore
-    return new Program(IDL, PROGRAM_ID, provider);
+    return new Program(IDL, provider);
   }, [connection]);
 
   return { program, connection };
