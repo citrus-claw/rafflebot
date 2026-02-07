@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
+use switchboard_on_demand::accounts::RandomnessAccountData;
 
 declare_id!("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
 
@@ -44,6 +45,8 @@ pub mod rafflebot {
         raffle.winner = None;
         raffle.winning_ticket = None;
         raffle.randomness = None;
+        raffle.randomness_account = None;
+        raffle.commit_slot = None;
         raffle.platform_wallet = ctx.accounts.platform_wallet.key();
         raffle.created_at = clock.unix_timestamp;
         raffle.bump = ctx.bumps.raffle;
@@ -112,8 +115,9 @@ pub mod rafflebot {
         Ok(())
     }
 
-    /// Draw winner using VRF randomness (called by authority after deadline)
-    pub fn draw_winner(ctx: Context<DrawWinner>, randomness: [u8; 32]) -> Result<()> {
+    /// Phase 1: Commit to Switchboard randomness (authority calls after deadline)
+    /// Bundle this instruction with Switchboard's commitIx in the same tx
+    pub fn commit_draw(ctx: Context<CommitDraw>) -> Result<()> {
         let raffle = &mut ctx.accounts.raffle;
         let clock = Clock::get()?;
 
@@ -123,15 +127,77 @@ pub mod rafflebot {
         require!(raffle.total_tickets > 0, RaffleError::NoTickets);
         require!(raffle.total_pot >= raffle.min_pot, RaffleError::ThresholdNotMet);
 
+        // Parse Switchboard randomness account to verify it's been committed
+        let randomness_data = RandomnessAccountData::parse(
+            ctx.accounts.randomness_account.data.borrow()
+        ).map_err(|_| RaffleError::InvalidRandomnessAccount)?;
+
+        // Verify randomness was committed in this or previous slot (fresh)
+        require!(
+            randomness_data.seed_slot == clock.slot - 1 || randomness_data.seed_slot == clock.slot,
+            RaffleError::RandomnessExpired
+        );
+
+        // Ensure randomness hasn't been revealed yet
+        require!(
+            randomness_data.get_value(clock.slot).is_err(),
+            RaffleError::RandomnessAlreadyRevealed
+        );
+
+        // Store the randomness account and commit slot
+        raffle.randomness_account = Some(ctx.accounts.randomness_account.key());
+        raffle.commit_slot = Some(randomness_data.seed_slot);
+        raffle.status = RaffleStatus::DrawCommitted;
+
+        msg!("Draw committed! Randomness account: {} | Seed slot: {}", 
+            ctx.accounts.randomness_account.key(), randomness_data.seed_slot);
+
+        Ok(())
+    }
+
+    /// Phase 2: Settle draw using revealed Switchboard randomness
+    /// Bundle this instruction with Switchboard's revealIx in the same tx
+    pub fn settle_draw(ctx: Context<SettleDraw>) -> Result<()> {
+        let raffle = &mut ctx.accounts.raffle;
+        let clock = Clock::get()?;
+
+        // Validations
+        require!(raffle.status == RaffleStatus::DrawCommitted, RaffleError::DrawNotCommitted);
+
+        let stored_randomness_account = raffle.randomness_account
+            .ok_or(RaffleError::InvalidRandomnessAccount)?;
+        require!(
+            ctx.accounts.randomness_account.key() == stored_randomness_account,
+            RaffleError::InvalidRandomnessAccount
+        );
+
+        // Parse and get revealed randomness
+        let randomness_data = RandomnessAccountData::parse(
+            ctx.accounts.randomness_account.data.borrow()
+        ).map_err(|_| RaffleError::InvalidRandomnessAccount)?;
+
+        // Verify seed slot matches what was committed
+        let commit_slot = raffle.commit_slot.ok_or(RaffleError::DrawNotCommitted)?;
+        require!(
+            randomness_data.seed_slot == commit_slot,
+            RaffleError::RandomnessExpired
+        );
+
+        // Get the revealed random value
+        let revealed_random_value = randomness_data
+            .get_value(clock.slot)
+            .map_err(|_| RaffleError::RandomnessNotResolved)?;
+
         // Use randomness to pick winning ticket index
-        let random_value = u64::from_le_bytes(randomness[0..8].try_into().unwrap());
+        let random_value = u64::from_le_bytes(revealed_random_value[0..8].try_into().unwrap());
         let winning_ticket = (random_value % raffle.total_tickets as u64) as u32;
 
         raffle.winning_ticket = Some(winning_ticket);
-        raffle.randomness = Some(randomness);
+        raffle.randomness = Some(revealed_random_value);
         raffle.status = RaffleStatus::DrawComplete;
 
-        msg!("Winner drawn! Winning ticket index: {}", winning_ticket);
+        msg!("Winner drawn! Winning ticket index: {} | Randomness: {:?}", 
+            winning_ticket, &revealed_random_value[0..8]);
 
         Ok(())
     }
@@ -394,7 +460,7 @@ pub struct BuyTickets<'info> {
 }
 
 #[derive(Accounts)]
-pub struct DrawWinner<'info> {
+pub struct CommitDraw<'info> {
     #[account(
         mut,
         has_one = authority,
@@ -404,8 +470,25 @@ pub struct DrawWinner<'info> {
     pub raffle: Account<'info, Raffle>,
 
     pub authority: Signer<'info>,
-    
-    // TODO: Add Switchboard VRF accounts for production
+
+    /// CHECK: Switchboard Randomness account — validated via RandomnessAccountData::parse
+    pub randomness_account: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct SettleDraw<'info> {
+    #[account(
+        mut,
+        has_one = authority,
+        seeds = [b"raffle", raffle.authority.as_ref(), raffle.name.as_bytes()],
+        bump = raffle.bump,
+    )]
+    pub raffle: Account<'info, Raffle>,
+
+    pub authority: Signer<'info>,
+
+    /// CHECK: Switchboard Randomness account — validated against stored key + parsed
+    pub randomness_account: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
@@ -534,6 +617,8 @@ pub struct Raffle {
     pub winner: Option<Pubkey>,
     pub winning_ticket: Option<u32>,
     pub randomness: Option<[u8; 32]>,
+    pub randomness_account: Option<Pubkey>,
+    pub commit_slot: Option<u64>,
     pub created_at: i64,
     pub bump: u8,
     pub escrow_bump: u8,
@@ -554,6 +639,7 @@ pub struct Entry {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, InitSpace)]
 pub enum RaffleStatus {
     Active,
+    DrawCommitted,
     DrawComplete,
     Claimed,
     Cancelled,
@@ -605,4 +691,14 @@ pub enum RaffleError {
     NotEntryOwner,
     #[msg("Already refunded")]
     AlreadyRefunded,
+    #[msg("Invalid randomness account")]
+    InvalidRandomnessAccount,
+    #[msg("Randomness has expired")]
+    RandomnessExpired,
+    #[msg("Randomness already revealed")]
+    RandomnessAlreadyRevealed,
+    #[msg("Randomness not yet resolved")]
+    RandomnessNotResolved,
+    #[msg("Draw not committed yet")]
+    DrawNotCommitted,
 }

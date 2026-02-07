@@ -412,6 +412,65 @@
       "args": []
     },
     {
+      "name": "commit_draw",
+      "docs": [
+        "Phase 1: Commit to Switchboard randomness (authority calls after deadline)",
+        "Bundle this instruction with Switchboard's commitIx in the same tx"
+      ],
+      "discriminator": [
+        210,
+        106,
+        32,
+        68,
+        253,
+        95,
+        229,
+        1
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.authority",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.name",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "raffle"
+          ]
+        },
+        {
+          "name": "randomness_account"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "create_raffle",
       "docs": [
         "Create a new raffle (agent-only in practice, but permissionless on-chain)"
@@ -526,19 +585,20 @@
       ]
     },
     {
-      "name": "draw_winner",
+      "name": "settle_draw",
       "docs": [
-        "Draw winner using VRF randomness (called by authority after deadline)"
+        "Phase 2: Settle draw using revealed Switchboard randomness",
+        "Bundle this instruction with Switchboard's revealIx in the same tx"
       ],
       "discriminator": [
-        250,
-        103,
+        175,
+        154,
+        75,
+        30,
         118,
-        147,
-        219,
-        235,
-        169,
-        220
+        117,
+        107,
+        194
       ],
       "accounts": [
         {
@@ -576,19 +636,12 @@
           "relations": [
             "raffle"
           ]
+        },
+        {
+          "name": "randomness_account"
         }
       ],
-      "args": [
-        {
-          "name": "randomness",
-          "type": {
-            "array": [
-              "u8",
-              32
-            ]
-          }
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -719,6 +772,31 @@
       "code": 6019,
       "name": "AlreadyRefunded",
       "msg": "Already refunded"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidRandomnessAccount",
+      "msg": "Invalid randomness account"
+    },
+    {
+      "code": 6021,
+      "name": "RandomnessExpired",
+      "msg": "Randomness has expired"
+    },
+    {
+      "code": 6022,
+      "name": "RandomnessAlreadyRevealed",
+      "msg": "Randomness already revealed"
+    },
+    {
+      "code": 6023,
+      "name": "RandomnessNotResolved",
+      "msg": "Randomness not yet resolved"
+    },
+    {
+      "code": 6024,
+      "name": "DrawNotCommitted",
+      "msg": "Draw not committed yet"
     }
   ],
   "types": [
@@ -839,6 +917,18 @@
             }
           },
           {
+            "name": "randomness_account",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "commit_slot",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
             "name": "created_at",
             "type": "i64"
           },
@@ -860,6 +950,9 @@
         "variants": [
           {
             "name": "Active"
+          },
+          {
+            "name": "DrawCommitted"
           },
           {
             "name": "DrawComplete"

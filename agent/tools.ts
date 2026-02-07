@@ -20,6 +20,7 @@ import {
   mintTo,
   TOKEN_PROGRAM_ID 
 } from "@solana/spl-token";
+import * as sb from "@switchboard-xyz/on-demand";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -133,6 +134,7 @@ export async function listRaffles(): Promise<RaffleInfo[]> {
     const status = r.account.status;
     let statusStr = "Unknown";
     if (status.active) statusStr = "Active";
+    else if (status.drawCommitted) statusStr = "Draw Committed";
     else if (status.drawComplete) statusStr = "Draw Complete";
     else if (status.claimed) statusStr = "Claimed";
     else if (status.cancelled) statusStr = "Cancelled";
@@ -164,28 +166,100 @@ export async function getRaffle(addressOrName: string): Promise<RaffleInfo | nul
 }
 
 /**
- * Draw winner for a raffle (requires VRF in production)
- * For hackathon demo, uses pseudo-random from blockhash
+ * Draw winner for a raffle using Switchboard On-Demand VRF
+ * Two-phase: commit (bundle with Switchboard commitIx) → settle (bundle with revealIx)
  */
 export async function drawWinner(raffleAddress: string): Promise<{ success: boolean; winner?: string; error?: string }> {
   try {
     const { program, provider, wallet } = getProgram();
     const rafflePubkey = new PublicKey(raffleAddress);
-    
-    // For demo: generate randomness from recent blockhash
-    // In production, this would use Switchboard VRF
-    const slot = await provider.connection.getSlot();
-    const blockhash = await provider.connection.getRecentBlockhash();
-    const randomBytes = Buffer.from(blockhash.blockhash).slice(0, 32);
-    const randomness = Array.from(randomBytes);
+    const connection = provider.connection;
 
-    const tx = await program.methods
-      .drawWinner(randomness)
+    // Load Switchboard program
+    const sbProgram = await sb.loadSbProgram(provider);
+
+    // Get the default Switchboard queue
+    const queue = await sb.getDefaultQueue(connection.rpcEndpoint);
+
+    // Generate a keypair for the randomness account
+    const rngKp = Keypair.generate();
+
+    // Create the Switchboard randomness account
+    const [randomness, createIx] = await sb.Randomness.create(sbProgram, rngKp, queue);
+
+    const createTx = await sb.asV0Tx({
+      connection,
+      ixs: [createIx],
+      payer: wallet.publicKey,
+      signers: [wallet, rngKp],
+      computeUnitPrice: 75_000,
+      computeUnitLimitMultiple: 1.3,
+    });
+    const createSig = await connection.sendTransaction(createTx);
+    await connection.confirmTransaction(createSig, "confirmed");
+    console.log("Randomness account created:", rngKp.publicKey.toBase58());
+
+    // Phase 1: Commit — bundle Switchboard commitIx + our commit_draw
+    const commitIx = await randomness.commitIx(queue);
+
+    const commitDrawIx = await program.methods
+      .commitDraw()
       .accounts({
         raffle: rafflePubkey,
         authority: wallet.publicKey,
+        randomnessAccount: rngKp.publicKey,
       })
-      .rpc();
+      .instruction();
+
+    const commitTx = await sb.asV0Tx({
+      connection,
+      ixs: [commitIx, commitDrawIx],
+      payer: wallet.publicKey,
+      signers: [wallet],
+      computeUnitPrice: 75_000,
+      computeUnitLimitMultiple: 1.3,
+    });
+    const commitSig = await connection.sendTransaction(commitTx);
+    await connection.confirmTransaction(commitSig, "confirmed");
+    console.log("Draw committed! Tx:", commitSig);
+
+    // Wait for slot to advance so oracle can generate randomness
+    console.log("Waiting for randomness generation...");
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Phase 2: Settle — bundle Switchboard revealIx + our settle_draw
+    let revealIx: anchor.web3.TransactionInstruction | null = null;
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      try {
+        revealIx = await randomness.revealIx();
+        break;
+      } catch (e) {
+        console.log(`Reveal attempt ${attempt}/5 failed, retrying in 2s...`);
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+    if (!revealIx) throw new Error("Failed to get reveal instruction after 5 attempts");
+
+    const settleDrawIx = await program.methods
+      .settleDraw()
+      .accounts({
+        raffle: rafflePubkey,
+        authority: wallet.publicKey,
+        randomnessAccount: rngKp.publicKey,
+      })
+      .instruction();
+
+    const revealTx = await sb.asV0Tx({
+      connection,
+      ixs: [revealIx, settleDrawIx],
+      payer: wallet.publicKey,
+      signers: [wallet],
+      computeUnitPrice: 75_000,
+      computeUnitLimitMultiple: 1.3,
+    });
+    const revealSig = await connection.sendTransaction(revealTx);
+    await connection.confirmTransaction(revealSig, "confirmed");
+    console.log("Draw settled! Tx:", revealSig);
 
     // Fetch updated raffle to get winning ticket
     // @ts-ignore
