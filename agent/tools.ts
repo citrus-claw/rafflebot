@@ -25,7 +25,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // Config
-const PROGRAM_ID = new PublicKey("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
+const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 const TEST_USDC = new PublicKey("2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2");
 const IDL_PATH = path.join(__dirname, "../target/idl/rafflebot.json");
 const WALLET_PATH = process.env.HOME + "/.config/solana/id.json";
@@ -176,7 +176,8 @@ export async function drawWinner(raffleAddress: string): Promise<{ success: bool
     const connection = provider.connection;
 
     // Load Switchboard program
-    const sbProgram = await sb.loadSbProgram(provider);
+    const sbProgramId = await sb.getProgramId(connection);
+    const sbProgram = await anchor.Program.at(sbProgramId, provider);
 
     // Get the default Switchboard queue
     const queue = await sb.getDefaultQueue(connection.rpcEndpoint);
@@ -185,7 +186,7 @@ export async function drawWinner(raffleAddress: string): Promise<{ success: bool
     const rngKp = Keypair.generate();
 
     // Create the Switchboard randomness account
-    const [randomness, createIx] = await sb.Randomness.create(sbProgram, rngKp, queue);
+    const [randomness, createIx] = await sb.Randomness.create(sbProgram, rngKp, queue.pubkey);
 
     const createTx = await sb.asV0Tx({
       connection,
@@ -200,7 +201,7 @@ export async function drawWinner(raffleAddress: string): Promise<{ success: bool
     console.log("Randomness account created:", rngKp.publicKey.toBase58());
 
     // Phase 1: Commit — bundle Switchboard commitIx + our commit_draw
-    const commitIx = await randomness.commitIx(queue);
+    const commitIx = await randomness.commitIx(queue.pubkey);
 
     const commitDrawIx = await program.methods
       .commitDraw()

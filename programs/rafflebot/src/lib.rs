@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 use switchboard_on_demand::accounts::RandomnessAccountData;
 
-declare_id!("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
+declare_id!("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 
 /// Platform fee: 10% (1000 basis points)
 const PLATFORM_FEE_BPS: u64 = 1000;

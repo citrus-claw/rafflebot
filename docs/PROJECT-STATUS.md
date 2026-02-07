@@ -46,7 +46,8 @@
 - [x] Updated agent tools with Switchboard SDK (create randomness account, commit, reveal)
 - [x] Retry logic on reveal (5 attempts)
 - [x] IDL + TS types synced to frontend
-- [ ] Devnet end-to-end test with live Switchboard oracle
+- [x] Devnet end-to-end test — 10/10 passed (create→buy→commit→settle→claim)
+- [x] Program redeployed: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
 
 ## Phase 5: Polish & Submission ❌
 - [ ] Demo video
@@ -68,4 +69,4 @@
 
 ---
 
-*Last updated: 2026-02-07 20:45 UTC*
+*Last updated: 2026-02-07 21:12 UTC*
