@@ -37,53 +37,44 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
     }
   };
 
-  // Show carnival ticket confirmation
   if (purchased) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="animate-ticket-enter max-w-sm w-full">
-          {/* Ticket shape */}
-          <div className="relative bg-white rounded-lg overflow-hidden border-2 border-border-dark shadow-[6px_6px_0_#E0DBD2] ticket-notch">
-            <div className="h-2 carnival-stripe-top" />
-            
-            <div className="p-6 text-center">
-              <div className="text-5xl mb-3">🎟️</div>
-              <h2 className="font-display text-2xl text-accent-red font-bold mb-1">
-                YOU&apos;RE IN!
-              </h2>
-              <p className="text-text-secondary text-sm mb-6">
-                {quantity} ticket{quantity > 1 ? 's' : ''} purchased
-              </p>
+      <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+        <div className="max-w-sm w-full bg-cream" style={{ border: '1.6px solid #393939', borderRadius: '6px' }}>
+          <div className="p-8 text-center">
+            <p className="text-2xl text-text-primary font-bold mb-2">
+              YOU&apos;RE IN!
+            </p>
+            <p className="text-text-secondary text-xs mb-6">
+              {quantity} ticket{quantity > 1 ? 's' : ''} purchased
+            </p>
 
-              {/* Ticket details */}
-              <div className="bg-cream rounded-lg p-4 border-2 border-border-light mb-6">
-                <p className="text-text-secondary text-[11px] uppercase tracking-wider mb-1">Raffle</p>
-                <p className="font-display text-text-primary text-lg font-bold">{raffle.name}</p>
-                <div className="mt-3 pt-3 border-t-2 border-dashed border-border-light flex justify-between">
-                  <div>
-                    <p className="text-text-secondary text-[11px] uppercase tracking-wider">Qty</p>
-                    <p className="text-accent-red font-bold text-lg font-mono">{quantity}</p>
-                  </div>
-                  <div>
-                    <p className="text-text-secondary text-[11px] uppercase tracking-wider">Total</p>
-                    <p className="text-accent-red font-bold text-lg font-mono">${totalCost} USDC</p>
-                  </div>
+            <div className="p-4 mb-6" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+              <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">Raffle</p>
+              <p className="text-text-primary text-sm font-bold">{raffle.name}</p>
+              <div className="mt-3 pt-3 flex justify-between" style={{ borderTop: '0.8px dashed #393939' }}>
+                <div>
+                  <p className="text-text-secondary text-[10px] uppercase tracking-wider">Qty</p>
+                  <p className="text-accent-red font-bold text-lg">{quantity}</p>
+                </div>
+                <div>
+                  <p className="text-text-secondary text-[10px] uppercase tracking-wider">Total</p>
+                  <p className="text-accent-red font-bold text-lg">${totalCost} USDC</p>
                 </div>
               </div>
-
-              <p className="text-text-secondary text-xs mb-4 font-mono uppercase tracking-wider">
-                ★ Keep this coupon ★
-              </p>
-
-              <button
-                onClick={onClose}
-                className="w-full py-3 rounded-lg font-bold text-white bg-accent-red border-2 border-border-dark hover:bg-accent-red/90 transition-colors shadow-[3px_3px_0_#2A2A2A]"
-              >
-                Done
-              </button>
             </div>
 
-            <div className="h-2 carnival-stripe-top" />
+            <p className="text-text-secondary text-[10px] mb-4 uppercase tracking-wider">
+              ★ Keep this coupon ★
+            </p>
+
+            <button
+              onClick={onClose}
+              className="w-full py-3 text-sm font-bold text-cream"
+              style={{ background: '#393939', border: '2.4px solid #393939', borderRadius: '6px' }}
+            >
+              Done
+            </button>
           </div>
         </div>
       </div>
@@ -91,39 +82,37 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white border-2 border-border-dark rounded-lg p-6 max-w-md w-full shadow-[6px_6px_0_#E0DBD2]">
-        {/* Header */}
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+      <div className="bg-cream p-6 max-w-md w-full" style={{ border: '1.6px solid #393939', borderRadius: '6px' }}>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="font-display text-xl text-text-primary font-bold">Buy Tickets</h2>
+          <h2 className="text-base text-text-primary font-bold">Buy Tickets</h2>
           <button
             onClick={onClose}
-            className="text-text-secondary hover:text-text-primary transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-cream"
+            className="text-text-secondary hover:text-text-primary w-8 h-8 flex items-center justify-center"
             aria-label="Close"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         <div className="space-y-5">
-          {/* Raffle info */}
-          <div className="bg-cream rounded-lg p-4 border-2 border-border-light">
-            <p className="text-text-secondary text-[11px] uppercase tracking-wider">Raffle</p>
-            <p className="text-text-primary font-display text-lg font-bold">{raffle.name}</p>
+          <div className="p-4" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+            <p className="text-text-secondary text-[10px] uppercase tracking-wider">Raffle</p>
+            <p className="text-text-primary text-sm font-bold">{raffle.name}</p>
           </div>
 
-          {/* Quantity selector */}
           <div>
-            <label className="block text-text-secondary text-sm mb-3">
+            <label className="block text-text-secondary text-xs mb-3">
               How many tickets? <span className="text-text-secondary/50">(max {raffle.maxPerWallet})</span>
             </label>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
-                className="w-12 h-12 rounded-lg bg-white border-2 border-border-dark text-text-primary hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+                className="w-10 h-10 flex items-center justify-center text-text-primary disabled:opacity-30 font-bold"
+                style={{ border: '1.6px solid #393939', borderRadius: '6px' }}
               >
                 −
               </button>
@@ -131,77 +120,78 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
                 type="number"
                 value={quantity}
                 onChange={(e) =>
-                  setQuantity(
-                    Math.min(raffle.maxPerWallet, Math.max(1, parseInt(e.target.value) || 1))
-                  )
+                  setQuantity(Math.min(raffle.maxPerWallet, Math.max(1, parseInt(e.target.value) || 1)))
                 }
-                className="flex-1 bg-white border-2 border-border-dark rounded-lg px-4 py-3 text-accent-red text-center text-2xl font-bold font-mono focus:border-accent-red focus:outline-none"
+                className="flex-1 bg-transparent px-4 py-2.5 text-accent-red text-center text-xl font-bold focus:outline-none"
+                style={{ border: '1.6px solid #393939', borderRadius: '6px' }}
                 min={1}
                 max={raffle.maxPerWallet}
               />
               <button
                 onClick={() => setQuantity(Math.min(raffle.maxPerWallet, quantity + 1))}
                 disabled={quantity >= raffle.maxPerWallet}
-                className="w-12 h-12 rounded-lg bg-white border-2 border-border-dark text-text-primary hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+                className="w-10 h-10 flex items-center justify-center text-text-primary disabled:opacity-30 font-bold"
+                style={{ border: '1.6px solid #393939', borderRadius: '6px' }}
               >
                 +
               </button>
             </div>
           </div>
 
-          {/* Quick select */}
           <div className="flex gap-2">
             {[1, 5, 10, 25].map((n) => (
               <button
                 key={n}
                 onClick={() => setQuantity(Math.min(n, raffle.maxPerWallet))}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 border-2 ${
-                  quantity === n
-                    ? "bg-accent-red text-white border-border-dark"
-                    : "bg-white border-border-light text-text-secondary hover:text-text-primary hover:border-border-dark"
+                className={`flex-1 py-2 text-xs font-bold ${
+                  quantity === n ? "text-cream" : "text-text-secondary"
                 }`}
+                style={{
+                  background: quantity === n ? '#393939' : 'transparent',
+                  border: quantity === n ? '1.6px solid #393939' : '0.8px dashed #393939',
+                  borderRadius: '6px',
+                }}
               >
                 {n}×
               </button>
             ))}
           </div>
 
-          {/* Cost breakdown */}
-          <div className="border-t-2 border-dashed border-border-light pt-4 space-y-2">
-            <div className="flex justify-between text-text-secondary text-sm">
+          <div className="pt-4 space-y-2" style={{ borderTop: '0.8px dashed #393939' }}>
+            <div className="flex justify-between text-text-secondary text-xs">
               <span>Ticket price</span>
-              <span className="font-mono">${raffle.ticketPrice} USDC</span>
+              <span>${raffle.ticketPrice} USDC</span>
             </div>
-            <div className="flex justify-between text-text-secondary text-sm">
+            <div className="flex justify-between text-text-secondary text-xs">
               <span>Quantity</span>
-              <span className="font-mono">× {quantity}</span>
+              <span>× {quantity}</span>
             </div>
-            <div className="flex justify-between text-text-primary text-xl font-bold pt-3 border-t-2 border-border-dark">
+            <div className="flex justify-between text-text-primary text-lg font-bold pt-3" style={{ borderTop: '1.6px solid #393939' }}>
               <span>Total</span>
-              <span className="font-mono text-accent-red">${totalCost} USDC</span>
+              <span className="text-accent-red">${totalCost} USDC</span>
             </div>
           </div>
 
-          {/* Buy button */}
           <button
             onClick={handleBuy}
             disabled={loading}
-            className="w-full bg-accent-red hover:bg-accent-red/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 rounded-lg transition-all text-lg border-2 border-border-dark shadow-[3px_3px_0_#2A2A2A]"
+            className="w-full py-3 text-sm font-bold text-cream disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: '#393939', border: '2.4px solid #393939', borderRadius: '6px' }}
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
                 Processing...
               </span>
             ) : (
-              `🎟️ Buy ${quantity} Ticket${quantity > 1 ? "s" : ""}`
+              `Buy ${quantity} Ticket${quantity > 1 ? "s" : ""} →`
             )}
           </button>
 
-          <p className="text-text-secondary/50 text-xs text-center font-mono">
+          <p className="text-text-secondary text-[10px] text-center">
             If minimum pot isn&apos;t met, you&apos;ll receive a full refund.
           </p>
         </div>

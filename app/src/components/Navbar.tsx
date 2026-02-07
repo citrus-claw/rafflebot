@@ -16,13 +16,12 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b-2 border-border-dark">
+    <nav className="sticky top-0 z-50 bg-cream" style={{ borderBottom: '0.8px solid #393939' }}>
       <div className="container mx-auto px-4 max-w-6xl">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <span className="text-2xl">🎪</span>
-              <span className="font-display text-xl font-bold text-text-primary tracking-tight">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-text-primary text-lg font-bold tracking-tight">
                 RaffleBot
               </span>
             </Link>
@@ -31,11 +30,12 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 py-1.5 text-xs font-medium transition-colors ${
                     pathname === link.href
-                      ? "bg-accent-red text-white"
-                      : "text-text-secondary hover:text-text-primary hover:bg-border-light/50"
+                      ? "text-text-primary font-bold"
+                      : "text-text-secondary hover:text-text-primary"
                   }`}
+                  style={pathname === link.href ? { borderBottom: '1.6px solid #393939' } : {}}
                 >
                   {link.label}
                 </Link>
@@ -52,11 +52,11 @@ export function Navbar() {
               className="md:hidden text-text-secondary hover:text-text-primary p-2"
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 {mobileOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -64,16 +64,16 @@ export function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t-2 border-border-light py-4 space-y-1">
+          <div className="md:hidden py-4 space-y-1" style={{ borderTop: '0.8px dashed #393939' }}>
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block py-3 px-4 rounded-lg text-base font-medium transition-colors ${
+                className={`block py-2 px-3 text-sm transition-colors ${
                   pathname === link.href
-                    ? "text-white bg-accent-red"
-                    : "text-text-secondary hover:text-text-primary hover:bg-border-light/50"
+                    ? "text-text-primary font-bold"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {link.label}

@@ -1,166 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #F5F0E8;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-warm: #FEFDFB;
-  --accent-red: #C41E3A;
-  --accent-gold: #DAA520;
-  --border: #2A2A2A;
-  --border-light: #E0DBD2;
-  --text-secondary: #666666;
-  --cream: #F5F0E8;
+  --bg: #FBF7EB;
+  --text: #141414;
+  --border: #393939;
+  --accent: #C41E3A;
+  --accent-gold: #B8860B;
+  --muted: #8B8B6E;
+}
+
+* {
+  font-family: "IBM Plex Mono", monospace;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: 'DM Sans', sans-serif;
-}
-
-/* === PAPER TEXTURE === */
-.paper-texture::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* === TICKET PERFORATION (light theme) === */
-.ticket-perforation-right {
-  position: relative;
-}
-.ticket-perforation-right::after {
-  content: '';
-  position: absolute;
-  top: -1px;
-  bottom: -1px;
-  right: 68px;
-  width: 0;
-  border-right: 2px dashed var(--border-light);
-}
-
-/* Scalloped/perforated edge using radial gradient circles */
-.ticket-perf-edge {
-  position: relative;
-}
-.ticket-perf-edge::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 67px;
-  width: 12px;
-  background: radial-gradient(circle 5px at 6px 0, var(--background) 4.5px, transparent 5px);
-  background-size: 12px 16px;
-  z-index: 2;
-}
-
-/* Notches for ticket stub */
-.ticket-notch::after,
-.ticket-notch::before {
-  content: '';
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: var(--background);
-  border-radius: 50%;
-  z-index: 2;
-}
-.ticket-notch::before {
-  top: -7px;
-  right: 62px;
-}
-.ticket-notch::after {
-  bottom: -7px;
-  right: 62px;
-}
-
-/* === CARNIVAL STRIPES === */
-.carnival-stripe-top {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--accent-red),
-    var(--accent-red) 8px,
-    #FFFFFF 8px,
-    #FFFFFF 16px
-  );
-}
-
-.carnival-stripe-subtle {
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(196, 30, 58, 0.06),
-    rgba(196, 30, 58, 0.06) 8px,
-    transparent 8px,
-    transparent 16px
-  );
+  color: var(--text);
+  background: var(--bg);
+  font-family: "IBM Plex Mono", monospace;
 }
 
 /* === WALLET ADAPTER OVERRIDES === */
 .wallet-adapter-button {
-  background: var(--accent-red) !important;
-  border-radius: 8px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  background: var(--border) !important;
+  border-radius: 6px !important;
+  font-family: "IBM Plex Mono", monospace !important;
   font-weight: 600 !important;
-  border: 2px solid var(--border) !important;
-  color: #FFFFFF !important;
+  border: 2.4px solid var(--border) !important;
+  color: var(--bg) !important;
+  font-size: 13px !important;
 }
 
 .wallet-adapter-button:hover {
-  background: #A01830 !important;
+  background: var(--text) !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background: var(--card) !important;
-  border: 2px solid var(--border) !important;
+  background: var(--bg) !important;
+  border: 1.6px solid var(--border) !important;
+  border-radius: 6px !important;
+  font-family: "IBM Plex Mono", monospace !important;
 }
 
 .wallet-adapter-modal-title {
-  color: var(--foreground) !important;
-  font-family: 'Playfair Display', serif !important;
+  color: var(--text) !important;
+  font-family: "IBM Plex Mono", monospace !important;
 }
 
 .wallet-adapter-modal-list li {
-  background: var(--cream) !important;
+  background: transparent !important;
+  border: 0.8px dashed var(--border) !important;
+  border-radius: 6px !important;
+  margin-bottom: 4px !important;
 }
 
 /* === SCROLLBAR === */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-red);
+  background: var(--border);
+  border-radius: 3px;
 }
 
 /* === SELECTION === */
 ::selection {
   background: rgba(196, 30, 58, 0.15);
-  color: var(--foreground);
-}
-
-/* === ANIMATION === */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes ticketEnter {
-  0% { transform: scale(0.85) rotate(-3deg); opacity: 0; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  color: var(--text);
 }

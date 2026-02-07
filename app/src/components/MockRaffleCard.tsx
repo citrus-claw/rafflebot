@@ -45,88 +45,80 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
     : 100;
 
   return (
-    <div 
-      onClick={onClick}
-      className="group relative cursor-pointer"
-    >
-      <div className={`
-        relative overflow-hidden rounded-lg
-        bg-white
-        border-2 transition-all duration-300
-        ${active 
-          ? 'border-border-dark hover:-translate-y-1 hover:shadow-[4px_4px_0_#E0DBD2]' 
-          : 'border-border-light opacity-85'}
-        ticket-perf-edge ticket-notch
-      `}>
-        <div className="h-1.5 carnival-stripe-top" />
-        
-        <div className="p-5 pr-[76px]">
+    <div onClick={onClick} className="group relative cursor-pointer">
+      <div
+        className="relative overflow-hidden"
+        style={{
+          border: active ? '0.8px dashed #393939' : '0.8px dashed #D4D0C8',
+          borderRadius: '6px',
+          opacity: active ? 1 : 0.75,
+        }}
+      >
+        <div className="p-5 pr-16">
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1 min-w-0">
-              <h3 className="font-display text-lg text-text-primary font-bold tracking-tight truncate">
+              <h3 className="text-sm text-text-primary font-bold tracking-tight truncate">
                 {raffle.name}
               </h3>
-              <p className="text-text-secondary text-xs font-mono mt-0.5">
+              <p className="text-text-secondary text-[10px] mt-1">
                 №{raffle.id}
               </p>
             </div>
-            <span className={`
-              ml-3 shrink-0 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border
-              ${active 
-                ? 'bg-green-50 text-green-700 border-green-200' 
-                : 'bg-gray-50 text-text-secondary border-border-light'}
-            `}>
+            <span
+              className="ml-3 shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
+              style={{
+                color: active ? '#C41E3A' : '#8B8B6E',
+                background: active ? '#C41E3A15' : '#8B8B6E15',
+                border: `0.8px solid ${active ? '#C41E3A40' : '#8B8B6E40'}`,
+              }}
+            >
               {active ? 'Active' : 'Ended'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <p className="text-text-secondary text-[11px] uppercase tracking-wider">Prize Pool</p>
-              <p className="text-accent-red font-bold text-xl font-mono">{formatUSDC(raffle.totalPot)}</p>
+              <p className="text-text-secondary text-[10px] uppercase tracking-wider">Prize Pool</p>
+              <p className="text-accent-red font-bold text-lg">{formatUSDC(raffle.totalPot)}</p>
             </div>
             <div>
-              <p className="text-text-secondary text-[11px] uppercase tracking-wider">Per Ticket</p>
-              <p className="text-text-primary font-semibold text-lg">{formatUSDC(raffle.ticketPrice)}</p>
+              <p className="text-text-secondary text-[10px] uppercase tracking-wider">Per Ticket</p>
+              <p className="text-text-primary font-semibold text-base">{formatUSDC(raffle.ticketPrice)}</p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-xs">
             <span className="text-text-secondary">
               <span className="text-text-primary font-bold">{raffle.totalTickets}</span> tickets sold
             </span>
             {active && (
-              <span className="text-accent-red font-semibold">
-                ⏱ {timeRemaining}
-              </span>
+              <span className="text-accent-red font-semibold">{timeRemaining}</span>
             )}
           </div>
 
           {active && (
             <div className="mt-3">
-              <div className="h-1.5 bg-border-light rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-accent-red transition-all duration-500 rounded-full"
-                  style={{ width: `${progress}%` }}
-                />
+              <div className="h-1 bg-border-light rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#E8927C' }} />
               </div>
-              <p className="text-[10px] text-text-secondary mt-1 font-mono">
-                {Math.round(progress)}% of min pot
-              </p>
+              <p className="text-[10px] text-text-secondary mt-1">{Math.round(progress)}% of min pot</p>
             </div>
           )}
         </div>
 
-        <div className="absolute top-0 right-0 w-[68px] h-full flex flex-col items-center justify-center bg-cream/50">
-          <span className="text-accent-red/50 text-[9px] uppercase tracking-[0.2em] font-mono font-bold" style={{ writingMode: 'vertical-rl' }}>
+        <div
+          className="absolute top-0 right-0 w-14 h-full flex flex-col items-center justify-center"
+          style={{ borderLeft: '0.8px dashed #393939' }}
+        >
+          <span className="text-[8px] uppercase tracking-[0.15em] font-bold text-text-secondary" style={{ writingMode: 'vertical-rl' }}>
             ADMIT ONE
           </span>
         </div>
 
         {raffle.winner && (
-          <div className="mx-5 mb-4 p-3 bg-accent-gold/10 rounded-lg border-2 border-accent-gold/30">
-            <p className="text-accent-gold text-sm font-bold">🏆 Winner</p>
-            <p className="text-text-primary font-mono text-xs truncate">{raffle.winner}</p>
+          <div className="mx-5 mb-4 p-3 rounded" style={{ border: '0.8px dashed #B8860B', background: '#B8860B10' }}>
+            <p className="text-accent-gold text-xs font-bold">Winner</p>
+            <p className="text-text-primary text-[10px] truncate mt-1">{raffle.winner}</p>
           </div>
         )}
       </div>

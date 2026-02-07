@@ -46,112 +46,124 @@ const mockRaffles = [
   },
 ];
 
-/* ───── Hero Section ───── */
+/* ───── Hero ───── */
 function HeroSection() {
   return (
-    <section className="relative py-20 md:py-28 -mt-8">
-      {/* Decorative ferris wheel */}
-      <div className="absolute -top-10 -right-16 opacity-[0.07] pointer-events-none">
-        <FerrisWheel size={300} />
-      </div>
+    <section className="py-16 md:py-24">
+      <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-10 px-4">
+        {/* Left text — StockTaper style: big bold monospace, left-aligned */}
+        <div className="flex-1">
+          <h1 className="text-3xl md:text-5xl leading-tight mb-5 text-text-primary font-bold">
+            On-chain raffles.
+            <br />
+            Actually fair.
+          </h1>
 
-      <div className="relative max-w-4xl mx-auto text-center px-4">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border-2 border-border-dark mb-8">
-          <span className="w-2 h-2 rounded-full bg-green-500" />
-          <span className="text-text-secondary text-sm font-medium">Live on Solana Devnet</span>
-        </div>
+          <p className="text-text-secondary text-sm max-w-md mb-6 leading-relaxed">
+            <span className="text-text-primary font-semibold">RaffleBot</span> offers provably fair raffles on Solana,
+            powered by VRF randomness, so the story is easy to verify,
+            even if you don&apos;t have a blockchain degree.
+          </p>
 
-        {/* Drum illustration */}
-        <div className="flex justify-center mb-8">
-          <RaffleDrum size={140} className="animate-float" />
-        </div>
+          {/* Stats inline — like StockTaper's "Free to use" area */}
+          <div className="flex gap-6 mb-8">
+            {[
+              { value: 'VRF', label: 'Verified Random' },
+              { value: '90%', label: 'To Winners' },
+              { value: '<1s', label: 'Settlement' },
+            ].map((s) => (
+              <div key={s.label}>
+                <p className="text-accent-red font-bold text-lg">{s.value}</p>
+                <p className="text-text-secondary text-[10px] uppercase tracking-wider">{s.label}</p>
+              </div>
+            ))}
+          </div>
 
-        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] mb-6 text-text-primary font-bold">
-          On-Chain Raffles
-          <br />
-          <span className="italic text-accent-red">Provably Fair</span>
-        </h1>
-
-        <p className="text-text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          AI-powered raffles on Solana with <span className="text-accent-gold font-semibold">VRF randomness</span>. 
-          Create or enter raffles with USDC — every draw is verifiable on-chain.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="#raffles"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-accent-red text-white font-bold text-lg border-2 border-border-dark hover:bg-accent-red/90 transition-colors shadow-[3px_3px_0_#2A2A2A]"
+            className="inline-flex items-center px-5 py-2.5 text-xs font-bold text-cream"
+            style={{ background: '#393939', border: '2.4px solid #393939', borderRadius: '6px' }}
           >
-            🎟️ Browse Raffles
-          </a>
-          <a
-            href="#how-it-works"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white text-text-primary font-semibold text-lg border-2 border-border-dark hover:bg-cream transition-colors shadow-[3px_3px_0_#E0DBD2]"
-          >
-            How It Works
+            Browse Raffles
           </a>
         </div>
 
-        {/* Stats ribbon */}
-        <div className="mt-16 grid grid-cols-3 gap-6 max-w-lg mx-auto">
-          {[
-            { value: 'VRF', label: 'Verified Random' },
-            { value: '90%', label: 'To Winners' },
-            { value: '< 1s', label: 'Settlement' },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <p className="text-accent-red font-bold text-2xl md:text-3xl font-mono">{stat.value}</p>
-              <p className="text-text-secondary text-xs uppercase tracking-wider mt-1">{stat.label}</p>
-            </div>
-          ))}
+        {/* Right illustration — like StockTaper's astronaut */}
+        <div className="flex-shrink-0 hidden md:block">
+          <RaffleDrum size={260} />
         </div>
       </div>
     </section>
   );
 }
 
-/* ───── Features Section ───── */
+/* ───── Premium Features — like StockTaper's feature cards ───── */
 function FeaturesSection() {
   const features = [
     {
-      illustration: <TicketIllustration size={60} />,
-      title: 'Provably Fair',
-      desc: 'Switchboard VRF provides verifiable randomness. No one can predict or manipulate the outcome.',
+      illustration: <TicketIllustration size={44} />,
+      pill: { text: 'DEFAULT', color: '#8B8B6E' },
+      title: 'DEEP-DIVE THE DRAW',
+      bullets: [
+        'Verifiable randomness via Switchboard VRF',
+        'Full on-chain audit trail',
+        'Transparent prize distribution',
+      ],
     },
     {
-      illustration: <TentIllustration size={60} />,
-      title: 'AI Agent Managed',
-      desc: 'An autonomous AI agent creates raffles, manages draws, and distributes prizes automatically.',
+      illustration: <TentIllustration size={44} />,
+      pill: { text: 'AI', color: '#E8927C' },
+      title: 'AI AGENT MANAGED',
+      bullets: [
+        'Autonomous raffle creation',
+        'Automated prize distribution',
+        'Smart draw scheduling',
+      ],
     },
     {
-      illustration: <TrophyIllustration size={60} />,
-      title: 'Fully On-Chain',
-      desc: 'Every ticket, draw, and payout is recorded on Solana. Complete transparency, always auditable.',
+      illustration: <TrophyIllustration size={44} />,
+      pill: { text: 'ON-CHAIN', color: '#B8860B' },
+      title: 'FULLY ON-CHAIN',
+      bullets: [
+        'Every ticket recorded on Solana',
+        'Winners verified publicly',
+        'Funds held in program escrow',
+      ],
     },
   ];
 
   return (
-    <section className="py-16">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="font-display text-3xl md:text-4xl text-text-primary font-bold mb-3">
-            Why RaffleBot?
-          </h2>
-          <p className="text-text-secondary max-w-xl mx-auto">
-            Built for trust, speed, and fairness on Solana.
-          </p>
-        </div>
+    <section className="py-12">
+      <div className="max-w-5xl mx-auto px-4">
+        <h2 className="text-xl text-text-primary font-bold text-center mb-8">
+          Premium Features
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4">
           {features.map((f) => (
             <div
               key={f.title}
-              className="relative p-6 rounded-lg bg-white border-2 border-border-dark transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_4px_0_#E0DBD2]"
+              className="p-5 relative"
+              style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}
             >
-              <div className="mb-4">{f.illustration}</div>
-              <h3 className="font-display text-lg text-text-primary font-bold mb-2">{f.title}</h3>
-              <p className="text-text-secondary text-sm leading-relaxed">{f.desc}</p>
+              {/* Pill tag — top right like StockTaper */}
+              <span
+                className="absolute top-3 right-3 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
+                style={{ color: f.pill.color, background: `${f.pill.color}15`, border: `0.8px solid ${f.pill.color}40` }}
+              >
+                {f.pill.text}
+              </span>
+
+              <div className="mb-3">{f.illustration}</div>
+              <h3 className="text-xs text-text-primary font-bold mb-3 uppercase tracking-wider">{f.title}</h3>
+              <ul className="space-y-1.5">
+                {f.bullets.map((b) => (
+                  <li key={b} className="text-text-secondary text-[11px] leading-relaxed flex gap-2">
+                    <span className="text-text-secondary">·</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -160,7 +172,7 @@ function FeaturesSection() {
   );
 }
 
-/* ───── How It Works ───── */
+/* ───── How It Works — numbered steps ───── */
 function HowItWorksSection() {
   const steps = [
     { num: '01', title: 'Create', desc: 'The AI agent creates a raffle with ticket price, duration, and minimum pot.' },
@@ -169,28 +181,114 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="py-16">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="font-display text-3xl md:text-4xl text-text-primary font-bold mb-3">
-            How It Works
-          </h2>
-        </div>
+    <section id="how-it-works" className="py-12">
+      <div className="max-w-4xl mx-auto px-4">
+        <h2 className="text-xl text-text-primary font-bold text-center mb-10">
+          How It Works
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {steps.map((step, i) => (
             <div key={step.num} className="relative text-center">
-              {/* Connector line */}
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-px border-t-2 border-dashed border-border-light" />
+                <div className="hidden md:block absolute top-5 left-[60%] w-[80%]" style={{ borderTop: '0.8px dashed #393939' }} />
               )}
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-white border-2 border-border-dark mb-4 shadow-[3px_3px_0_#E0DBD2]">
-                <span className="font-mono font-bold text-accent-red text-xl">{step.num}</span>
+              <div
+                className="inline-flex items-center justify-center w-10 h-10 mb-3"
+                style={{ border: '0.8px dashed #393939', borderRadius: '50%' }}
+              >
+                <span className="font-bold text-accent-red text-xs">{step.num}</span>
               </div>
-              <h3 className="font-display text-xl text-text-primary font-bold mb-2">{step.title}</h3>
-              <p className="text-text-secondary text-sm leading-relaxed">{step.desc}</p>
+              <h3 className="text-xs text-text-primary font-bold mb-2 uppercase tracking-wider">{step.title}</h3>
+              <p className="text-text-secondary text-[11px] leading-relaxed">{step.desc}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───── Three Column Section — like StockTaper's Opportunity Radar / Sector Pulse / Market Snapshot ───── */
+function InfoColumnsSection() {
+  return (
+    <section className="py-12" style={{ borderTop: '0.8px dashed #393939' }}>
+      <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-3 gap-6">
+        {/* Raffle Radar — like Opportunity Radar */}
+        <div>
+          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+            Raffle Radar
+          </h3>
+          <div className="space-y-4">
+            <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+              <p className="text-xs text-text-primary font-bold mb-1">Provably Fair Draws</p>
+              <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
+                Every winner selected by Switchboard VRF. On-chain entropy ensures no manipulation.
+              </p>
+              <div className="flex gap-1.5">
+                {['VRF', 'SOLANA'].map((t) => (
+                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#8B8B6E', background: '#8B8B6E15', border: '0.8px solid #8B8B6E40' }}>{t}</span>
+                ))}
+              </div>
+            </div>
+            <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+              <p className="text-xs text-text-primary font-bold mb-1">AI Agent Automation</p>
+              <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
+                Autonomous creation, management, and distribution. No human intervention needed.
+              </p>
+              <div className="flex gap-1.5">
+                {['AI', 'AUTO'].map((t) => (
+                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#E8927C', background: '#E8927C15', border: '0.8px solid #E8927C40' }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Prize Distribution — like Sector Pulse */}
+        <div>
+          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+            Prize Structure
+          </h3>
+          <div className="p-3 mb-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+            <p className="text-xs text-text-primary font-bold mb-1">Winner Takes 90%</p>
+            <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
+              The vast majority of every pot goes directly to the winner&apos;s wallet. Protocol takes a minimal 10% fee.
+            </p>
+            <div className="flex gap-1.5">
+              {['USDC', 'SPL'].map((t) => (
+                <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#B8860B', background: '#B8860B15', border: '0.8px solid #B8860B40' }}>{t}</span>
+              ))}
+            </div>
+          </div>
+          <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+            <p className="text-xs text-text-primary font-bold mb-1">Minimum Pot Protection</p>
+            <p className="text-[10px] text-text-secondary leading-relaxed">
+              If the minimum pot isn&apos;t reached, all ticket holders receive a full refund. No risk.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Stats — like Market Snapshot */}
+        <div>
+          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+            Platform Snapshot
+          </h3>
+          <div className="space-y-0">
+            {[
+              { label: 'Network', value: 'Solana Devnet' },
+              { label: 'Token', value: 'USDC' },
+              { label: 'Winner Share', value: '90%' },
+              { label: 'Draw Method', value: 'Switchboard VRF' },
+              { label: 'Settlement', value: '< 1 second' },
+              { label: 'Refund Policy', value: 'Auto if min not met' },
+            ].map((item) => (
+              <div key={item.label} className="flex justify-between py-2 text-xs" style={{ borderBottom: '0.8px dashed #D4D0C8' }}>
+                <span className="text-text-secondary">{item.label}</span>
+                <span className="text-text-primary font-semibold">{item.value}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -205,40 +303,36 @@ function RaffleListSection({ children, isEmpty, loading: isLoading, error: err }
   error?: Error | null;
 }) {
   return (
-    <section id="raffles" className="py-12">
-      {/* Divider stripe */}
-      <div className="h-1 carnival-stripe-top rounded-full mb-10 opacity-40" />
-      
-      <div className="flex items-center gap-3 mb-2">
-        <h2 className="font-display text-3xl text-text-primary font-bold">Live Raffles</h2>
-        <span className="px-2.5 py-0.5 rounded-md bg-accent-red text-white text-xs font-bold uppercase tracking-wider border-2 border-border-dark">
+    <section id="raffles" className="py-10" style={{ borderTop: '0.8px dashed #393939' }}>
+      <div className="flex items-center gap-3 mb-1">
+        <h2 className="text-lg text-text-primary font-bold">Live Raffles</h2>
+        <span
+          className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
+          style={{ color: '#C41E3A', background: '#C41E3A15', border: '0.8px solid #C41E3A40' }}
+        >
           Active
         </span>
       </div>
-      <p className="text-text-secondary mb-8">
-        Grab your tickets before time runs out
-      </p>
+      <p className="text-text-secondary text-xs mb-6">Grab your tickets before time runs out</p>
 
       {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <RaffleCardSkeleton />
           <RaffleCardSkeleton />
         </div>
       ) : err ? (
-        <div className="text-center py-12 bg-white rounded-lg border-2 border-accent-red">
-          <p className="text-accent-red font-medium">Failed to load raffles</p>
-          <p className="text-text-secondary text-sm mt-2">{err.message}</p>
+        <div className="text-center py-10" style={{ border: '0.8px dashed #C41E3A', borderRadius: '6px' }}>
+          <p className="text-accent-red text-xs">Failed to load raffles</p>
+          <p className="text-text-secondary text-[10px] mt-1">{err.message}</p>
         </div>
       ) : isEmpty ? (
-        <div className="text-center py-16 bg-white rounded-lg border-2 border-border-dark">
-          <div className="text-5xl mb-4">🎪</div>
-          <p className="text-text-secondary text-lg">No active raffles right now</p>
-          <p className="text-text-secondary/60 text-sm mt-2">
-            Check back soon — the AI agent creates new raffles regularly!
-          </p>
+        <div className="text-center py-14" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+          <FerrisWheel size={60} className="mx-auto mb-3 opacity-20" />
+          <p className="text-text-secondary text-xs">No active raffles right now</p>
+          <p className="text-text-secondary text-[10px] mt-1">Check back soon — new raffles created regularly.</p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {children}
         </div>
       )}
@@ -258,6 +352,7 @@ export default function Home() {
         <HeroSection />
         <FeaturesSection />
         <HowItWorksSection />
+        <InfoColumnsSection />
 
         <RaffleListSection isEmpty={mockActive.length === 0} loading={false}>
           {mockActive.map((raffle) => (
@@ -266,11 +361,12 @@ export default function Home() {
         </RaffleListSection>
 
         {mockEnded.length > 0 && (
-          <section className="py-8">
-            <h2 className="font-display text-2xl text-text-primary font-bold mb-6 flex items-center gap-2">
-              <TrophyIllustration size={32} /> Recent Winners
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <section className="py-6">
+            <div className="flex items-center gap-3 mb-4">
+              <TrophyIllustration size={24} />
+              <h2 className="text-base text-text-primary font-bold">Recent Winners</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {mockEnded.map((raffle) => (
                 <MockRaffleCard key={raffle.id} raffle={raffle} />
               ))}
@@ -286,6 +382,7 @@ export default function Home() {
       <HeroSection />
       <FeaturesSection />
       <HowItWorksSection />
+      <InfoColumnsSection />
 
       <RaffleListSection isEmpty={activeRaffles.length === 0} loading={loading} error={error}>
         {activeRaffles.map((raffle) => (
@@ -298,9 +395,12 @@ export default function Home() {
       </RaffleListSection>
 
       {endedRaffles.length > 0 && (
-        <section className="py-8">
-          <h2 className="font-display text-2xl text-text-primary font-bold mb-6">🏆 Recent Winners</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <section className="py-6">
+          <div className="flex items-center gap-3 mb-4">
+            <TrophyIllustration size={24} />
+            <h2 className="text-base text-text-primary font-bold">Recent Winners</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {endedRaffles.map((raffle) => (
               <RaffleCard 
                 key={raffle.publicKey.toBase58()} 
