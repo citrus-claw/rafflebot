@@ -6,7 +6,8 @@ import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRaffle, useMyEntry } from '@/hooks/useRaffles';
 import { useBuyTickets } from '@/hooks/useBuyTickets';
-import { getStatusLabel, isActive } from '@/lib/idl/rafflebot';
+import { useClaimPrize } from '@/hooks/useClaimPrize';
+import { getStatusLabel, isActive, isDrawComplete } from '@/lib/idl/rafflebot';
 import { BN } from '@coral-xyz/anchor';
 import Link from 'next/link';
 
@@ -47,6 +48,7 @@ export default function RafflePage() {
   const { raffle, loading, error, refetch } = useRaffle(rafflePubkey);
   const { entry, refetch: refetchEntry } = useMyEntry(rafflePubkey);
   const { buyTickets, loading: buying, error: buyError } = useBuyTickets();
+  const { claimPrize, loading: claiming, error: claimError } = useClaimPrize();
 
   useEffect(() => {
     try {
@@ -71,6 +73,24 @@ export default function RafflePage() {
       setTxStatus('Transaction failed');
     }
   };
+
+  const handleClaim = async () => {
+    if (!rafflePubkey || !raffle) return;
+    
+    setTxStatus('Claiming prize...');
+    const sig = await claimPrize(rafflePubkey, raffle);
+    
+    if (sig) {
+      setTxStatus(`🎉 Prize claimed! Tx: ${sig.slice(0, 8)}...`);
+      refetch();
+    } else {
+      setTxStatus('Claim failed');
+    }
+  };
+
+  // Check if current user is the winner
+  const isWinner = raffle?.winner && publicKey && raffle.winner.equals(publicKey);
+  const canClaim = isWinner && raffle && isDrawComplete(raffle.status);
 
   if (!rafflePubkey) {
     return (
@@ -233,10 +253,38 @@ export default function RafflePage() {
         {/* Winner Display */}
         {raffle.winner && (
           <div className="mt-6 p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-            <p className="text-yellow-400 font-medium">🏆 Winner</p>
-            <p className="text-white font-mono text-sm break-all">
-              {raffle.winner.toBase58()}
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-yellow-400 font-medium">🏆 Winner</p>
+                <p className="text-white font-mono text-sm break-all">
+                  {raffle.winner.toBase58()}
+                </p>
+                {raffle.winningTicket !== null && (
+                  <p className="text-yellow-300 text-sm mt-1">
+                    Winning ticket: #{raffle.winningTicket}
+                  </p>
+                )}
+              </div>
+              
+              {/* Claim button for winner */}
+              {canClaim && (
+                <button
+                  onClick={handleClaim}
+                  disabled={claiming}
+                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {claiming ? 'Claiming...' : '💰 Claim Prize'}
+                </button>
+              )}
+            </div>
+            
+            {isWinner && !canClaim && raffle.status && 'claimed' in raffle.status && (
+              <p className="text-green-400 text-sm mt-2">✅ Prize claimed!</p>
+            )}
+            
+            {claimError && (
+              <p className="text-red-400 text-sm mt-2">{claimError.message}</p>
+            )}
           </div>
         )}
       </div>
