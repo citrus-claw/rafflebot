@@ -29,6 +29,14 @@ function shortenAddress(address: string): string {
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }
 
+function statusColor(r: RaffleWithKey['account']) {
+  if (isClaimed(r.status)) return 'bg-green-500/20 text-green-400';
+  if (isDrawComplete(r.status)) return 'bg-purple-500/20 text-purple-400';
+  if (isCancelled(r.status)) return 'bg-red-500/20 text-red-400';
+  return 'bg-gray-500/20 text-gray-400';
+}
+
+// Desktop table row
 function HistoryRow({ raffle }: { raffle: RaffleWithKey }) {
   const r = raffle.account;
   const claimed = isClaimed(r.status);
@@ -40,61 +48,79 @@ function HistoryRow({ raffle }: { raffle: RaffleWithKey }) {
       href={`/raffle/${raffle.publicKey.toBase58()}`}
       className="grid grid-cols-12 gap-4 items-center px-6 py-4 hover:bg-gray-800/50 transition-colors border-b border-gray-800 last:border-b-0"
     >
-      {/* Name */}
       <div className="col-span-3">
         <p className="text-white font-medium truncate">{r.name}</p>
         <p className="text-gray-500 text-xs">{formatDate(r.endTime)}</p>
       </div>
-
-      {/* Pot */}
       <div className="col-span-2 text-right">
         <p className="text-white font-semibold">{formatUSDC(r.totalPot)}</p>
         <p className="text-gray-500 text-xs">{r.totalTickets} tickets</p>
       </div>
-
-      {/* Winner */}
       <div className="col-span-3 text-center">
         {r.winner ? (
           <div>
-            <p className="text-yellow-400 font-mono text-sm">
-              🏆 {shortenAddress(r.winner.toBase58())}
-            </p>
-            <p className="text-gray-500 text-xs">
-              Ticket #{r.winningTicket}
-            </p>
+            <p className="text-yellow-400 font-mono text-sm">🏆 {shortenAddress(r.winner.toBase58())}</p>
+            <p className="text-gray-500 text-xs">Ticket #{r.winningTicket}</p>
           </div>
         ) : cancelled ? (
-          <p className="text-gray-500 text-sm">Cancelled — refunds enabled</p>
+          <p className="text-gray-500 text-sm">Cancelled</p>
         ) : drawn ? (
-          <p className="text-purple-400 text-sm">Winner drawn — awaiting claim</p>
+          <p className="text-purple-400 text-sm">Awaiting claim</p>
         ) : (
           <p className="text-gray-500 text-sm">—</p>
         )}
       </div>
-
-      {/* Prize */}
       <div className="col-span-2 text-right">
         {r.winner ? (
-          <p className="text-green-400 font-semibold">
-            {formatUSDC(new BN(r.totalPot.toNumber() * 0.9))}
-          </p>
+          <p className="text-green-400 font-semibold">{formatUSDC(new BN(r.totalPot.toNumber() * 0.9))}</p>
         ) : (
           <p className="text-gray-500">—</p>
         )}
       </div>
-
-      {/* Status */}
       <div className="col-span-2 text-right">
-        <span className={`
-          px-2 py-1 rounded-full text-xs font-medium
-          ${claimed ? 'bg-green-500/20 text-green-400' :
-            drawn ? 'bg-purple-500/20 text-purple-400' :
-            cancelled ? 'bg-red-500/20 text-red-400' :
-            'bg-gray-500/20 text-gray-400'}
-        `}>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(r)}`}>
           {getStatusLabel(r.status)}
         </span>
       </div>
+    </Link>
+  );
+}
+
+// Mobile card
+function HistoryCard({ raffle }: { raffle: RaffleWithKey }) {
+  const r = raffle.account;
+
+  return (
+    <Link
+      href={`/raffle/${raffle.publicKey.toBase58()}`}
+      className="block bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-purple-500 transition-all"
+    >
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <p className="text-white font-medium">{r.name}</p>
+          <p className="text-gray-500 text-xs">{formatDate(r.endTime)}</p>
+        </div>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(r)}`}>
+          {getStatusLabel(r.status)}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <p className="text-gray-400 text-xs">Pot</p>
+          <p className="text-white font-semibold">{formatUSDC(r.totalPot)}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-gray-400 text-xs">Tickets</p>
+          <p className="text-white font-semibold">{r.totalTickets}</p>
+        </div>
+      </div>
+      {r.winner && (
+        <div className="mt-3 p-2 bg-yellow-500/10 rounded-lg">
+          <p className="text-yellow-400 text-sm font-mono">
+            🏆 {shortenAddress(r.winner.toBase58())} — {formatUSDC(new BN(r.totalPot.toNumber() * 0.9))}
+          </p>
+        </div>
+      )}
     </Link>
   );
 }
@@ -124,7 +150,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <p className="text-gray-400 text-sm">Total Prizes Awarded</p>
           <p className="text-2xl font-bold text-green-400">
@@ -161,8 +187,8 @@ export default function HistoryPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-gray-900 rounded-xl border border-gray-700 overflow-hidden">
-          {/* Table header */}
+        {/* Desktop table */}
+        <div className="hidden md:block bg-gray-900 rounded-xl border border-gray-700 overflow-hidden">
           <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-800/50 border-b border-gray-700 text-gray-400 text-xs uppercase tracking-wider">
             <div className="col-span-3">Raffle</div>
             <div className="col-span-2 text-right">Pot</div>
@@ -170,10 +196,15 @@ export default function HistoryPage() {
             <div className="col-span-2 text-right">Prize (90%)</div>
             <div className="col-span-2 text-right">Status</div>
           </div>
-
-          {/* Rows */}
           {sorted.map((raffle) => (
             <HistoryRow key={raffle.publicKey.toBase58()} raffle={raffle} />
+          ))}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {sorted.map((raffle) => (
+            <HistoryCard key={raffle.publicKey.toBase58()} raffle={raffle} />
           ))}
         </div>
       )}

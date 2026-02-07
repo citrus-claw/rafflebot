@@ -153,7 +153,7 @@ export default function MyTicketsPage() {
       <p className="text-gray-400 mb-8">Track your entries across all raffles</p>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <p className="text-gray-400 text-sm">Total Tickets</p>
           <p className="text-2xl font-bold text-white">{totalTickets}</p>
