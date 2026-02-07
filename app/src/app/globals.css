@@ -1,24 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Alfa+Slab+One&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground: #ededed;
-  --background: #0d1117;
+  --foreground: #FFF1D0;
+  --background: #060810;
+  --carnival-red: #E63946;
+  --carnival-orange: #FB8500;
+  --carnival-amber: #FFB703;
+  --carnival-gold: #FFD700;
+  --carnival-cream: #FFF1D0;
+  --carnival-surface: #131829;
+  --carnival-border: #1E2540;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
-/* Wallet adapter styles override */
+/* === TICKET PERFORATION === */
+.ticket-perforation {
+  position: relative;
+}
+
+.ticket-perforation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 72px;
+  width: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 6px,
+    rgba(255, 183, 3, 0.3) 6px,
+    rgba(255, 183, 3, 0.3) 12px
+  );
+}
+
+/* Scalloped edges for ticket stubs */
+.ticket-edge-left {
+  -webkit-mask-image: radial-gradient(circle 6px at 0 50%, transparent 98%, black 100%);
+  mask-image: radial-gradient(circle 6px at 0 50%, transparent 98%, black 100%);
+  -webkit-mask-size: 100% 18px;
+  mask-size: 100% 18px;
+  -webkit-mask-position: left;
+  mask-position: left;
+}
+
+.ticket-edge-top {
+  background-image: radial-gradient(circle 8px at 16px 0, transparent 98%, var(--carnival-surface) 100%);
+  background-size: 32px 8px;
+  background-position: top;
+  background-repeat: repeat-x;
+}
+
+.ticket-notch::after,
+.ticket-notch::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--background);
+  border-radius: 50%;
+}
+.ticket-notch::before {
+  top: -8px;
+  right: 64px;
+}
+.ticket-notch::after {
+  bottom: -8px;
+  right: 64px;
+}
+
+/* === CARNIVAL LIGHTS === */
+.carnival-lights {
+  background-image:
+    radial-gradient(circle 3px, var(--carnival-gold) 100%, transparent 0),
+    radial-gradient(circle 3px, var(--carnival-red) 100%, transparent 0),
+    radial-gradient(circle 3px, var(--carnival-amber) 100%, transparent 0);
+  background-size: 60px 60px;
+  background-position: 0 0, 20px 0, 40px 0;
+  animation: bulbScroll 4s linear infinite;
+}
+
+@keyframes bulbScroll {
+  0% { background-position: 0 0, 20px 0, 40px 0; }
+  100% { background-position: 60px 0, 80px 0, 100px 0; }
+}
+
+/* === STRIPED BANNER === */
+.carnival-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--carnival-red),
+    var(--carnival-red) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.carnival-stripes-gold {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 215, 0, 0.15),
+    rgba(255, 215, 0, 0.15) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+/* === SHIMMER TEXT === */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--carnival-gold) 0%,
+    var(--carnival-cream) 25%,
+    var(--carnival-amber) 50%,
+    var(--carnival-cream) 75%,
+    var(--carnival-gold) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* === STAR BURST === */
+.starburst {
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(255, 183, 3, 0.08) 0deg,
+      transparent 30deg,
+      rgba(255, 183, 3, 0.08) 60deg,
+      transparent 90deg,
+      rgba(255, 183, 3, 0.08) 120deg,
+      transparent 150deg,
+      rgba(255, 183, 3, 0.08) 180deg,
+      transparent 210deg,
+      rgba(255, 183, 3, 0.08) 240deg,
+      transparent 270deg,
+      rgba(255, 183, 3, 0.08) 300deg,
+      transparent 330deg,
+      rgba(255, 183, 3, 0.08) 360deg
+    );
+}
+
+/* === GLOW EFFECTS === */
+.glow-red {
+  box-shadow: 0 0 30px rgba(230, 57, 70, 0.4), 0 0 60px rgba(230, 57, 70, 0.1);
+}
+
+.glow-gold {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), 0 0 60px rgba(255, 215, 0, 0.1);
+}
+
+.glow-amber {
+  box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+}
+
+/* === NOISE TEXTURE === */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* === WALLET ADAPTER OVERRIDES === */
 .wallet-adapter-button {
-  background-color: #9945ff !important;
+  background: linear-gradient(135deg, #E63946, #FB8500) !important;
+  border-radius: 9999px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 600 !important;
 }
 
 .wallet-adapter-button:hover {
-  background-color: #7c3aed !important;
+  background: linear-gradient(135deg, #c72d39, #e07600) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: #131829 !important;
+  border: 1px solid #1E2540 !important;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--carnival-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--carnival-amber);
+}
+
+/* === SELECTION === */
+::selection {
+  background: rgba(255, 183, 3, 0.3);
+  color: var(--carnival-cream);
 }

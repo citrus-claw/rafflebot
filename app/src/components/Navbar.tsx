@@ -10,29 +10,31 @@ export function Navbar() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Active Raffles" },
-    { href: "/my-tickets", label: "My Tickets" },
-    { href: "/history", label: "Winners" },
+    { href: "/", label: "🎪 Raffles" },
+    { href: "/my-tickets", label: "🎟️ My Tickets" },
+    { href: "/history", label: "🏆 Winners" },
   ];
 
   return (
-    <nav className="border-b border-gray-800 bg-dark sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 bg-carnival-darker/90 backdrop-blur-xl border-b border-carnival-border">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🎟️</span>
-              <span className="text-xl font-bold text-white">RaffleBot</span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <span className="text-3xl group-hover:animate-float">🎰</span>
+              <span className="font-ticket text-xl text-carnival-amber tracking-wide">
+                RaffleBot
+              </span>
             </Link>
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-1">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                     pathname === link.href
-                      ? "text-white font-medium"
-                      : "text-gray-400 hover:text-white"
+                      ? "bg-carnival-red/20 text-carnival-amber border border-carnival-red/30"
+                      : "text-carnival-cream/60 hover:text-carnival-cream hover:bg-white/5"
                   }`}
                 >
                   {link.label}
@@ -45,10 +47,9 @@ export function Navbar() {
             <div className="hidden sm:block">
               <WalletMultiButton />
             </div>
-            {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden text-gray-400 hover:text-white p-2"
+              className="md:hidden text-carnival-cream/60 hover:text-carnival-cream p-2"
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,18 +63,17 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-gray-800 py-4 space-y-3">
+          <div className="md:hidden border-t border-carnival-border py-4 space-y-2">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block py-2 px-2 rounded-lg transition-colors ${
+                className={`block py-3 px-4 rounded-xl text-base font-medium transition-colors ${
                   pathname === link.href
-                    ? "text-white bg-gray-800"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                    ? "text-carnival-amber bg-carnival-red/20 border border-carnival-red/30"
+                    : "text-carnival-cream/60 hover:text-carnival-cream hover:bg-white/5"
                 }`}
               >
                 {link.label}

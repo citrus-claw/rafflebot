@@ -49,7 +49,19 @@
 - [x] Devnet end-to-end test — 10/10 passed (create→buy→commit→settle→claim)
 - [x] Program redeployed: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
 
-## Phase 5: Polish & Submission ❌
+## Phase 5: Polish & Submission 🔄
+- [x] Carnival raffle ticket UI theme redesign
+  - Hero section with shimmer text, stats ribbon, CTA
+  - Features section (VRF, AI Agent, On-Chain)
+  - How It Works (Create → Buy → Win)
+  - Raffle cards as perforated ticket stubs with ADMIT ONE stub
+  - Ticket purchase confirmation as carnival ticket
+  - My Tickets as ticket stub collection with odds display
+  - History page with celebration styling
+  - Custom carnival color palette (reds, golds, ambers)
+  - Custom typography (Permanent Marker, Alfa Slab One, DM Sans)
+  - Noise texture, starburst, glow effects
+  - Wallet adapter themed to match
 - [ ] Demo video
 - [ ] Hackathon submission writeup
 - [ ] Error handling polish
@@ -69,4 +81,4 @@
 
 ---
 
-*Last updated: 2026-02-07 21:12 UTC*
+*Last updated: 2026-02-07 22:55 UTC*

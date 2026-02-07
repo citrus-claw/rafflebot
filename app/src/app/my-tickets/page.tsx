@@ -29,15 +29,105 @@ function formatTimeRemaining(endTime: BN): string {
   const now = Math.floor(Date.now() / 1000);
   const end = endTime.toNumber();
   const diff = end - now;
-
   if (diff <= 0) return 'Ended';
-
   const days = Math.floor(diff / 86400);
   const hours = Math.floor((diff % 86400) / 3600);
-
   if (days > 0) return `${days}d ${hours}h`;
   if (hours > 0) return `${hours}h`;
   return 'Soon';
+}
+
+/* ───── Ticket Stub Component ───── */
+function TicketStub({ entry: e, isWinner }: { entry: TicketEntry; isWinner: boolean }) {
+  const active = isActive(e.raffle.status);
+
+  return (
+    <Link 
+      href={`/raffle/${e.rafflePubkey.toBase58()}`}
+      className="group block relative cursor-pointer"
+    >
+      <div className={`
+        relative overflow-hidden rounded-2xl
+        bg-gradient-to-br from-carnival-surface to-carnival-dark
+        border transition-all duration-300
+        ${isWinner 
+          ? 'border-carnival-gold/40 glow-gold' 
+          : active 
+            ? 'border-carnival-amber/20 hover:border-carnival-amber/40' 
+            : 'border-carnival-border/50 opacity-80 hover:opacity-100'}
+        ticket-perforation ticket-notch
+      `}>
+        {/* Top stripe */}
+        <div className={`h-1.5 ${isWinner ? 'bg-gradient-to-r from-carnival-gold to-carnival-amber' : 'bg-carnival-gradient'}`} />
+
+        <div className="p-5 pr-20">
+          {/* Raffle name */}
+          <div className="flex items-start justify-between mb-3">
+            <div className="min-w-0">
+              <h3 className="font-ticket text-lg text-carnival-cream truncate">
+                {isWinner && '🏆 '}{e.raffle.name}
+              </h3>
+              <p className="text-carnival-cream/30 text-xs font-mono mt-0.5">
+                {e.rafflePubkey.toBase58().slice(0, 12)}…
+              </p>
+            </div>
+            <span className={`
+              ml-3 shrink-0 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider
+              ${isWinner 
+                ? 'bg-carnival-gold/15 text-carnival-gold border border-carnival-gold/20' 
+                : active 
+                  ? 'bg-green-500/15 text-green-400 border border-green-500/20'
+                  : 'bg-carnival-border/50 text-carnival-cream/40'}
+            `}>
+              {isWinner ? 'Won!' : getStatusLabel(e.raffle.status)}
+            </span>
+          </div>
+
+          {/* Ticket info */}
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider">Tickets</p>
+              <p className="text-carnival-amber font-bold text-lg font-mono">{e.entry.numTickets}</p>
+            </div>
+            <div>
+              <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider">Range</p>
+              <p className="text-carnival-cream font-mono text-sm">
+                #{e.entry.startTicketIndex} – #{e.entry.startTicketIndex + e.entry.numTickets - 1}
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom stats */}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-carnival-cream/40">
+              <span className="text-carnival-amber font-bold">{formatUSDC(e.raffle.totalPot)}</span> pot
+            </span>
+            {active && (
+              <span className="text-carnival-orange font-semibold text-xs">
+                ⏱ {formatTimeRemaining(e.raffle.endTime)}
+              </span>
+            )}
+          </div>
+
+          {/* Odds */}
+          {active && e.raffle.totalTickets > 0 && (
+            <div className="mt-2 pt-2 border-t border-carnival-border/30">
+              <p className="text-carnival-cream/25 text-xs font-mono">
+                Your odds: {((e.entry.numTickets / e.raffle.totalTickets) * 100).toFixed(1)}%
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Stub */}
+        <div className="absolute top-0 right-0 w-[72px] h-full flex flex-col items-center justify-center border-l border-dashed border-carnival-amber/20 bg-carnival-dark/50">
+          <span className="text-carnival-amber/50 font-mono font-bold text-lg">
+            {e.entry.numTickets}×
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
 }
 
 export default function MyTicketsPage() {
@@ -56,8 +146,6 @@ export default function MyTicketsPage() {
 
       try {
         setLoading(true);
-        
-        // Create read-only provider
         const dummyWallet = {
           publicKey: PublicKey.default,
           signTransaction: async () => { throw new Error('Read-only'); },
@@ -68,18 +156,16 @@ export default function MyTicketsPage() {
         });
         const program = new Program(IDL, provider);
 
-        // Fetch all entries for this user
         // @ts-ignore
         const allEntries = await program.account.entry.all([
           {
             memcmp: {
-              offset: 8 + 32, // After discriminator + raffle pubkey
+              offset: 8 + 32,
               bytes: publicKey.toBase58(),
             },
           },
         ]);
 
-        // Fetch corresponding raffles
         const ticketEntries: TicketEntry[] = [];
         
         for (const e of allEntries) {
@@ -97,7 +183,6 @@ export default function MyTicketsPage() {
           }
         }
 
-        // Sort by raffle end time (active first)
         ticketEntries.sort((a, b) => {
           const aActive = isActive(a.raffle.status);
           const bActive = isActive(b.raffle.status);
@@ -119,18 +204,19 @@ export default function MyTicketsPage() {
 
   if (!connected) {
     return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-white mb-4">My Tickets</h1>
-        <p className="text-gray-400">Connect your wallet to see your tickets</p>
+      <div className="text-center py-20">
+        <div className="text-6xl mb-4">🎟️</div>
+        <h1 className="font-display text-3xl text-carnival-cream mb-3">My Tickets</h1>
+        <p className="text-carnival-cream/40">Connect your wallet to see your tickets</p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-gray-400 mt-4">Loading your tickets...</p>
+      <div className="text-center py-20">
+        <div className="animate-spin h-8 w-8 border-2 border-carnival-amber border-t-transparent rounded-full mx-auto"></div>
+        <p className="text-carnival-cream/40 mt-4">Loading your tickets...</p>
       </div>
     );
   }
@@ -138,7 +224,6 @@ export default function MyTicketsPage() {
   const activeEntries = entries.filter(e => isActive(e.raffle.status));
   const pastEntries = entries.filter(e => !isActive(e.raffle.status));
 
-  // Calculate total stats
   const totalTickets = entries.reduce((sum, e) => sum + e.entry.numTickets, 0);
   const totalSpent = entries.reduce((sum, e) => 
     sum + (e.entry.numTickets * e.raffle.ticketPrice.toNumber()), 0
@@ -149,103 +234,60 @@ export default function MyTicketsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-white mb-2">My Tickets</h1>
-      <p className="text-gray-400 mb-8">Track your entries across all raffles</p>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="font-display text-3xl md:text-4xl text-carnival-cream mb-2">My Tickets 🎟️</h1>
+        <p className="text-carnival-cream/40">Your raffle ticket collection</p>
+      </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-          <p className="text-gray-400 text-sm">Total Tickets</p>
-          <p className="text-2xl font-bold text-white">{totalTickets}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div className="bg-carnival-surface rounded-2xl p-5 border border-carnival-border">
+          <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider mb-1">Total Tickets</p>
+          <p className="text-3xl font-bold text-carnival-cream font-mono">{totalTickets}</p>
         </div>
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-          <p className="text-gray-400 text-sm">Total Spent</p>
-          <p className="text-2xl font-bold text-white">${totalSpent.toFixed(2)}</p>
+        <div className="bg-carnival-surface rounded-2xl p-5 border border-carnival-border">
+          <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider mb-1">Total Spent</p>
+          <p className="text-3xl font-bold text-carnival-cream font-mono">${totalSpent.toFixed(2)}</p>
         </div>
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-          <p className="text-gray-400 text-sm">Wins</p>
-          <p className="text-2xl font-bold text-yellow-400">{wins} 🏆</p>
+        <div className="bg-carnival-surface rounded-2xl p-5 border border-carnival-border">
+          <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider mb-1">Wins</p>
+          <p className="text-3xl font-bold text-carnival-gold font-mono">{wins} 🏆</p>
         </div>
       </div>
 
       {entries.length === 0 ? (
-        <div className="text-center py-12 bg-gray-800/50 rounded-xl border border-gray-700">
-          <p className="text-gray-400">You haven't entered any raffles yet</p>
-          <Link href="/" className="text-purple-400 hover:underline mt-2 block">
+        <div className="text-center py-16 bg-carnival-surface/50 rounded-2xl border border-carnival-border">
+          <div className="text-5xl mb-4">🎪</div>
+          <p className="text-carnival-cream/50 text-lg">No tickets yet</p>
+          <Link href="/" className="text-carnival-amber hover:underline mt-3 block font-medium">
             Browse active raffles →
           </Link>
         </div>
       ) : (
         <>
-          {/* Active Entries */}
           {activeEntries.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-white mb-4">Active Raffles</h2>
-              <div className="space-y-4">
+            <div className="mb-10">
+              <h2 className="font-ticket text-xl text-carnival-amber mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                Active Entries
+              </h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 {activeEntries.map((e) => (
-                  <Link 
-                    key={e.entryPubkey.toBase58()}
-                    href={`/raffle/${e.rafflePubkey.toBase58()}`}
-                    className="block bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-purple-500 transition-colors"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{e.raffle.name}</h3>
-                        <p className="text-gray-400 text-sm">
-                          {e.entry.numTickets} ticket{e.entry.numTickets > 1 ? 's' : ''} 
-                          <span className="text-gray-500"> • </span>
-                          #{e.entry.startTicketIndex} - #{e.entry.startTicketIndex + e.entry.numTickets - 1}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-medium">{formatUSDC(e.raffle.totalPot)} pot</p>
-                        <p className="text-gray-400 text-sm">{formatTimeRemaining(e.raffle.endTime)} left</p>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-500">
-                      Your odds: {((e.entry.numTickets / e.raffle.totalTickets) * 100).toFixed(1)}%
-                    </div>
-                  </Link>
+                  <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={false} />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Past Entries */}
           {pastEntries.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold text-white mb-4">Past Raffles</h2>
-              <div className="space-y-4">
+              <h2 className="font-ticket text-xl text-carnival-cream/50 mb-4">Past Entries</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 {pastEntries.map((e) => {
-                  const isWinner = e.raffle.winner && e.raffle.winner.equals(publicKey!);
+                  const isWinner = !!(e.raffle.winner && e.raffle.winner.equals(publicKey!));
                   return (
-                    <Link 
-                      key={e.entryPubkey.toBase58()}
-                      href={`/raffle/${e.rafflePubkey.toBase58()}`}
-                      className={`block bg-gray-800 rounded-xl p-4 border transition-colors ${
-                        isWinner ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-gray-700 opacity-75'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="text-lg font-semibold text-white">
-                            {isWinner && '🏆 '}{e.raffle.name}
-                          </h3>
-                          <p className="text-gray-400 text-sm">
-                            {e.entry.numTickets} ticket{e.entry.numTickets > 1 ? 's' : ''}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            isWinner 
-                              ? 'bg-yellow-500/20 text-yellow-400' 
-                              : 'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {isWinner ? 'Won!' : getStatusLabel(e.raffle.status)}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                    <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={isWinner} />
                   );
                 })}
               </div>
