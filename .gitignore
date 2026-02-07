@@ -1,0 +1,22 @@
+# Anchor
+.anchor
+target/
+
+# Node
+node_modules/
+yarn-error.log
+
+# Test validator
+test-ledger/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local

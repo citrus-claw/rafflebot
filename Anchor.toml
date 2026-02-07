@@ -4,14 +4,17 @@
 seeds = false
 skip-lint = false
 
+[programs.localnet]
+rafflebot = "RafF1eBotxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
 [programs.devnet]
-rafflebot = "11111111111111111111111111111111"
+rafflebot = "RafF1eBotxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
