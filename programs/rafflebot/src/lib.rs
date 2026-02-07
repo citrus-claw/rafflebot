@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 
 declare_id!("RafF1eBotxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
@@ -82,13 +82,14 @@ pub mod rafflebot {
             .ok_or(RaffleError::Overflow)?;
 
         // Transfer tokens from buyer to escrow
-        let cpi_accounts = Transfer {
+        let cpi_accounts = TransferChecked {
             from: ctx.accounts.buyer_token_account.to_account_info(),
             to: ctx.accounts.escrow.to_account_info(),
+            mint: ctx.accounts.token_mint.to_account_info(),
             authority: ctx.accounts.buyer.to_account_info(),
         };
         let cpi_ctx = CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
-        token::transfer(cpi_ctx, total_cost)?;
+        transfer_checked(cpi_ctx, total_cost, ctx.accounts.token_mint.decimals)?;
 
         // Update or initialize entry
         let entry = &mut ctx.accounts.entry;
@@ -172,10 +173,12 @@ pub mod rafflebot {
             &[raffle.escrow_bump],
         ];
         let signer = &[&seeds[..]];
+        let decimals = ctx.accounts.token_mint.decimals;
 
-        let cpi_accounts = Transfer {
+        let cpi_accounts = TransferChecked {
             from: ctx.accounts.escrow.to_account_info(),
             to: ctx.accounts.winner_token_account.to_account_info(),
+            mint: ctx.accounts.token_mint.to_account_info(),
             authority: ctx.accounts.escrow.to_account_info(),
         };
         let cpi_ctx = CpiContext::new_with_signer(
@@ -183,12 +186,13 @@ pub mod rafflebot {
             cpi_accounts,
             signer,
         );
-        token::transfer(cpi_ctx, prize_amount)?;
+        transfer_checked(cpi_ctx, prize_amount, decimals)?;
 
         // Transfer platform fee
-        let cpi_accounts = Transfer {
+        let cpi_accounts = TransferChecked {
             from: ctx.accounts.escrow.to_account_info(),
             to: ctx.accounts.platform_token_account.to_account_info(),
+            mint: ctx.accounts.token_mint.to_account_info(),
             authority: ctx.accounts.escrow.to_account_info(),
         };
         let cpi_ctx = CpiContext::new_with_signer(
@@ -196,7 +200,7 @@ pub mod rafflebot {
             cpi_accounts,
             signer,
         );
-        token::transfer(cpi_ctx, platform_fee)?;
+        transfer_checked(cpi_ctx, platform_fee, decimals)?;
 
         // Update raffle status
         let raffle = &mut ctx.accounts.raffle;
@@ -258,9 +262,10 @@ pub mod rafflebot {
         ];
         let signer = &[&seeds[..]];
 
-        let cpi_accounts = Transfer {
+        let cpi_accounts = TransferChecked {
             from: ctx.accounts.escrow.to_account_info(),
             to: ctx.accounts.buyer_token_account.to_account_info(),
+            mint: ctx.accounts.token_mint.to_account_info(),
             authority: ctx.accounts.escrow.to_account_info(),
         };
         let cpi_ctx = CpiContext::new_with_signer(
@@ -268,7 +273,7 @@ pub mod rafflebot {
             cpi_accounts,
             signer,
         );
-        token::transfer(cpi_ctx, refund_amount)?;
+        transfer_checked(cpi_ctx, refund_amount, ctx.accounts.token_mint.decimals)?;
 
         // Mark as refunded
         let entry = &mut ctx.accounts.entry;
@@ -303,11 +308,12 @@ pub struct CreateRaffle<'info> {
         bump,
         token::mint = token_mint,
         token::authority = escrow,
+        token::token_program = token_program,
     )]
-    pub escrow: Account<'info, TokenAccount>,
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
 
     /// The SPL token mint (e.g., USDC)
-    pub token_mint: Account<'info, token::Mint>,
+    pub token_mint: InterfaceAccount<'info, Mint>,
 
     /// Platform wallet to receive fees
     /// CHECK: Just storing the pubkey, validated on claim
@@ -316,9 +322,8 @@ pub struct CreateRaffle<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
 }
 
 #[derive(Accounts)]
@@ -344,19 +349,24 @@ pub struct BuyTickets<'info> {
         seeds = [b"escrow", raffle.key().as_ref()],
         bump = raffle.escrow_bump,
     )]
-    pub escrow: Account<'info, TokenAccount>,
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = buyer_token_account.owner == buyer.key(),
         constraint = buyer_token_account.mint == raffle.token_mint,
     )]
-    pub buyer_token_account: Account<'info, TokenAccount>,
+    pub buyer_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        constraint = token_mint.key() == raffle.token_mint,
+    )]
+    pub token_mint: InterfaceAccount<'info, Mint>,
 
     #[account(mut)]
     pub buyer: Signer<'info>,
 
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
 }
 
@@ -395,24 +405,29 @@ pub struct ClaimPrize<'info> {
         seeds = [b"escrow", raffle.key().as_ref()],
         bump = raffle.escrow_bump,
     )]
-    pub escrow: Account<'info, TokenAccount>,
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = winner_token_account.owner == winner.key(),
         constraint = winner_token_account.mint == raffle.token_mint,
     )]
-    pub winner_token_account: Account<'info, TokenAccount>,
+    pub winner_token_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = platform_token_account.owner == raffle.platform_wallet,
         constraint = platform_token_account.mint == raffle.token_mint,
     )]
-    pub platform_token_account: Account<'info, TokenAccount>,
+    pub platform_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        constraint = token_mint.key() == raffle.token_mint,
+    )]
+    pub token_mint: InterfaceAccount<'info, Mint>,
 
     pub winner: Signer<'info>,
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
 }
 
 #[derive(Accounts)]
@@ -448,17 +463,22 @@ pub struct ClaimRefund<'info> {
         seeds = [b"escrow", raffle.key().as_ref()],
         bump = raffle.escrow_bump,
     )]
-    pub escrow: Account<'info, TokenAccount>,
+    pub escrow: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = buyer_token_account.owner == buyer.key(),
         constraint = buyer_token_account.mint == raffle.token_mint,
     )]
-    pub buyer_token_account: Account<'info, TokenAccount>,
+    pub buyer_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        constraint = token_mint.key() == raffle.token_mint,
+    )]
+    pub token_mint: InterfaceAccount<'info, Mint>,
 
     pub buyer: Signer<'info>,
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
 }
 
 // ============================================================================
