@@ -7,7 +7,7 @@ import { RaffleDrum } from '@/components/illustrations/RaffleDrum';
 import { TicketIllustration } from '@/components/illustrations/TicketIllustration';
 import { TentIllustration } from '@/components/illustrations/TentIllustration';
 import { TrophyIllustration } from '@/components/illustrations/TrophyIllustration';
-import { Bunting } from '@/components/illustrations/StarDecoration';
+import { FerrisWheel } from '@/components/illustrations/StarDecoration';
 import Link from 'next/link';
 
 const MOCK_MODE = false;
@@ -50,9 +50,9 @@ const mockRaffles = [
 function HeroSection() {
   return (
     <section className="relative py-20 md:py-28 -mt-8">
-      {/* Bunting decoration */}
-      <div className="absolute top-0 left-0 right-0 overflow-hidden opacity-40">
-        <Bunting className="w-full" />
+      {/* Decorative ferris wheel */}
+      <div className="absolute -top-10 -right-16 opacity-[0.07] pointer-events-none">
+        <FerrisWheel size={300} />
       </div>
 
       <div className="relative max-w-4xl mx-auto text-center px-4">
