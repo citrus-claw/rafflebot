@@ -21,19 +21,21 @@ import {
   TOKEN_PROGRAM_ID 
 } from "@solana/spl-token";
 import * as fs from "fs";
-import * as readline from "readline";
-
 const IDL = JSON.parse(fs.readFileSync("./target/idl/rafflebot.json", "utf8"));
 const PROGRAM_ID = new PublicKey("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
 const TEST_USDC = new PublicKey("2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2");
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+const INTERACTIVE = process.argv.includes("--interactive");
 
-function pause(msg: string = "Press Enter to continue..."): Promise<void> {
-  return new Promise(resolve => rl.question(`\n${msg}`, () => resolve()));
+function pause(msg: string = ""): Promise<void> {
+  if (!INTERACTIVE) {
+    console.log("\n---");
+    return sleep(500);
+  }
+  
+  const readline = require("readline");
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise(resolve => rl.question(`\n${msg || "Press Enter..."}`, () => { rl.close(); resolve(); }));
 }
 
 function sleep(ms: number): Promise<void> {
@@ -232,10 +234,9 @@ Production features:
   • Real USDC on mainnet
 `);
 
-  rl.close();
 }
 
 main().catch(e => {
   console.error("Error:", e);
-  rl.close();
+  process.exit(1);
 });
