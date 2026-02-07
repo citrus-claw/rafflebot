@@ -289,10 +289,19 @@ export default function RafflePage() {
         )}
       </div>
 
-      {/* Debug info */}
-      <div className="mt-6 text-xs text-gray-600">
-        <p>Raffle: {rafflePubkey.toBase58()}</p>
-        <p>Token: {raffle.tokenMint.toBase58()}</p>
+      {/* Verification info */}
+      <div className="mt-6 bg-gray-900 rounded-lg p-4 border border-gray-800">
+        <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mb-2">On-Chain Details</p>
+        <div className="space-y-1 text-xs text-gray-600 font-mono">
+          <p>Raffle: {rafflePubkey.toBase58()}</p>
+          <p>Token: {raffle.tokenMint.toBase58()}</p>
+          {raffle.randomnessAccount && (
+            <p>VRF Account: {raffle.randomnessAccount.toBase58()}</p>
+          )}
+          {raffle.randomness && (
+            <p>Randomness: {Buffer.from(raffle.randomness).toString('hex').slice(0, 32)}...</p>
+          )}
+        </div>
       </div>
     </div>
   );

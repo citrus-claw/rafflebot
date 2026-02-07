@@ -27,7 +27,7 @@
 - [x] My Tickets page — user's entries
 - [x] Hooks: useRaffles, useBuyTickets, useClaimPrize, useProgram
 - [x] IDL synced to frontend
-- [ ] History/winners page
+- [x] History/winners page (stats cards + table view + VRF verification notice)
 - [ ] Mobile responsive polish
 
 ## Phase 3: Agent Integration ✅
@@ -62,7 +62,7 @@
 | # | Task | Effort | Priority |
 |---|------|--------|----------|
 | 1 | ~~VRF integration~~ | ~~4-8h~~ | ✅ Done |
-| 2 | History/winners page | 2h | Medium |
+| 2 | ~~History/winners page~~ | ~~2h~~ | ✅ Done |
 | 3 | Mobile responsive | 2h | Low |
 | 4 | Demo video | 2-3h | High |
 | 5 | Submission writeup | 1-2h | High |
