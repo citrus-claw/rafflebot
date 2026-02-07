@@ -88,8 +88,8 @@ export default function RafflePage() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">🎪</div>
-        <p className="text-carnival-red font-medium text-lg">Invalid raffle ID</p>
-        <Link href="/" className="text-carnival-amber hover:underline mt-4 block">
+        <p className="text-accent-red font-medium text-lg">Invalid raffle ID</p>
+        <Link href="/" className="text-accent-gold hover:underline mt-4 block">
           ← Back to raffles
         </Link>
       </div>
@@ -99,8 +99,8 @@ export default function RafflePage() {
   if (loading) {
     return (
       <div className="text-center py-16">
-        <div className="animate-spin h-8 w-8 border-2 border-carnival-amber border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-carnival-cream/40 mt-4">Loading raffle...</p>
+        <div className="animate-spin h-8 w-8 border-2 border-accent-red border-t-transparent rounded-full mx-auto"></div>
+        <p className="text-text-secondary mt-4">Loading raffle...</p>
       </div>
     );
   }
@@ -109,9 +109,9 @@ export default function RafflePage() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">😕</div>
-        <p className="text-carnival-red font-medium">Failed to load raffle</p>
-        <p className="text-carnival-cream/30 text-sm mt-2">{error?.message}</p>
-        <Link href="/" className="text-carnival-amber hover:underline mt-4 block">
+        <p className="text-accent-red font-medium">Failed to load raffle</p>
+        <p className="text-text-secondary text-sm mt-2">{error?.message}</p>
+        <Link href="/" className="text-accent-gold hover:underline mt-4 block">
           ← Back to raffles
         </Link>
       </div>
@@ -128,30 +128,30 @@ export default function RafflePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Link href="/" className="inline-flex items-center gap-2 text-carnival-cream/40 hover:text-carnival-amber transition-colors mb-6 text-sm">
+      <Link href="/" className="inline-flex items-center gap-2 text-text-secondary hover:text-accent-red transition-colors mb-6 text-sm">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         Back to raffles
       </Link>
 
       {/* Main ticket card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-carnival-surface to-carnival-dark border border-carnival-border">
+      <div className="relative overflow-hidden rounded-lg bg-white border-2 border-border-dark shadow-[6px_6px_0_#E0DBD2]">
         {/* Top carnival stripe */}
-        <div className="h-2 bg-carnival-gradient" />
+        <div className="h-2 carnival-stripe-top" />
 
         <div className="p-6 md:p-8">
           {/* Header */}
           <div className="flex justify-between items-start mb-8">
             <div>
-              <h1 className="font-display text-3xl md:text-4xl text-carnival-cream mb-1">{raffle.name}</h1>
-              <p className="text-carnival-cream/30 text-xs font-mono">
-                {rafflePubkey.toBase58()}
+              <h1 className="font-display text-3xl md:text-4xl text-text-primary font-bold mb-1">{raffle.name}</h1>
+              <p className="text-text-secondary text-xs font-mono">
+                №{rafflePubkey.toBase58()}
               </p>
             </div>
             <span className={`
-              px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
+              px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider border-2
               ${active 
-                ? 'bg-green-500/15 text-green-400 border border-green-500/20' 
-                : 'bg-carnival-border/50 text-carnival-cream/40'}
+                ? 'bg-green-50 text-green-700 border-green-200' 
+                : 'bg-gray-50 text-text-secondary border-border-light'}
             `}>
               {getStatusLabel(raffle.status)}
             </span>
@@ -165,9 +165,9 @@ export default function RafflePage() {
               { label: 'Tickets Sold', value: raffle.totalTickets.toString(), accent: false },
               { label: active ? 'Time Left' : 'Status', value: active ? formatTimeRemaining(raffle.endTime) : getStatusLabel(raffle.status), accent: false },
             ].map((stat) => (
-              <div key={stat.label} className="bg-carnival-dark/60 rounded-xl p-4 border border-carnival-border">
-                <p className="text-carnival-cream/40 text-[11px] uppercase tracking-wider mb-1">{stat.label}</p>
-                <p className={`text-2xl font-bold font-mono ${stat.accent ? 'text-carnival-amber' : 'text-carnival-cream'}`}>
+              <div key={stat.label} className="bg-cream rounded-lg p-4 border-2 border-border-light">
+                <p className="text-text-secondary text-[11px] uppercase tracking-wider mb-1">{stat.label}</p>
+                <p className={`text-2xl font-bold font-mono ${stat.accent ? 'text-accent-red' : 'text-text-primary'}`}>
                   {stat.value}
                 </p>
               </div>
@@ -176,32 +176,32 @@ export default function RafflePage() {
 
           {/* Progress bar */}
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-carnival-cream/40 mb-2">
+            <div className="flex justify-between text-sm text-text-secondary mb-2">
               <span>Minimum pot progress</span>
               <span className="font-mono">{Math.round(progress)}%</span>
             </div>
-            <div className="h-3 bg-carnival-dark rounded-full overflow-hidden border border-carnival-border">
+            <div className="h-3 bg-cream rounded-full overflow-hidden border-2 border-border-light">
               <div 
-                className="h-full bg-gradient-to-r from-carnival-red via-carnival-orange to-carnival-amber transition-all duration-500 rounded-full"
+                className="h-full bg-accent-red transition-all duration-500 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="text-xs text-carnival-cream/25 mt-2 font-mono">
+            <p className="text-xs text-text-secondary mt-2 font-mono">
               {formatUSDC(raffle.totalPot)} / {formatUSDC(raffle.minPot)} minimum
             </p>
           </div>
 
           {/* My Tickets */}
           {entry && entry.numTickets > 0 && (
-            <div className="bg-carnival-amber/10 border border-carnival-amber/20 rounded-xl p-4 mb-6">
+            <div className="bg-accent-gold/10 border-2 border-accent-gold/30 rounded-lg p-4 mb-6">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">🎟️</span>
-                <p className="text-carnival-amber font-bold">Your Tickets</p>
+                <p className="text-accent-gold font-bold font-display">Your Tickets</p>
               </div>
-              <p className="text-carnival-cream text-lg font-mono">
+              <p className="text-text-primary text-lg font-mono">
                 {entry.numTickets} ticket{entry.numTickets > 1 ? 's' : ''} 
-                <span className="text-carnival-cream/40 text-sm ml-2">
-                  (#{entry.startTicketIndex} – #{entry.startTicketIndex + entry.numTickets - 1})
+                <span className="text-text-secondary text-sm ml-2">
+                  (№{entry.startTicketIndex} – №{entry.startTicketIndex + entry.numTickets - 1})
                 </span>
               </p>
             </div>
@@ -209,72 +209,72 @@ export default function RafflePage() {
 
           {/* Buy Section */}
           {active && connected && (
-            <div className="border-t border-carnival-border pt-6">
-              <h2 className="font-ticket text-xl text-carnival-amber mb-4">Buy Tickets</h2>
+            <div className="border-t-2 border-dashed border-border-light pt-6">
+              <h2 className="font-display text-xl text-text-primary font-bold mb-4">Buy Tickets</h2>
               
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="text-carnival-cream/40 text-sm block mb-2">Number of tickets</label>
+                  <label className="text-text-secondary text-sm block mb-2">Number of tickets</label>
                   <input
                     type="number"
                     min={1}
                     max={maxTickets}
                     value={ticketCount}
                     onChange={(e) => setTicketCount(Math.max(1, Math.min(maxTickets, parseInt(e.target.value) || 1)))}
-                    className="w-full bg-carnival-dark border border-carnival-border rounded-xl px-4 py-3 text-carnival-amber font-mono text-lg font-bold focus:border-carnival-amber/50 focus:outline-none"
+                    className="w-full bg-white border-2 border-border-dark rounded-lg px-4 py-3 text-accent-red font-mono text-lg font-bold focus:border-accent-red focus:outline-none"
                   />
                 </div>
                 <button
                   onClick={handleBuy}
                   disabled={buying || maxTickets <= 0}
-                  className="bg-gradient-to-r from-carnival-red to-carnival-orange text-white font-bold py-3 px-8 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                  className="bg-accent-red text-white font-bold py-3 px-8 rounded-lg hover:bg-accent-red/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg border-2 border-border-dark shadow-[3px_3px_0_#2A2A2A]"
                 >
                   {buying ? 'Buying...' : `🎟️ ${formatUSDC(raffle.ticketPrice.muln(ticketCount))}`}
                 </button>
               </div>
 
               {maxTickets <= 0 && (
-                <p className="text-carnival-amber text-sm mt-2">
-                  You've reached the maximum tickets per wallet ({raffle.maxPerWallet})
+                <p className="text-accent-red text-sm mt-2">
+                  You&apos;ve reached the maximum tickets per wallet ({raffle.maxPerWallet})
                 </p>
               )}
 
               {txStatus && (
                 <p className={`mt-4 text-sm font-medium ${
-                  txStatus.includes('Success') || txStatus.includes('🎉') ? 'text-green-400' 
-                  : txStatus.includes('failed') ? 'text-carnival-red' 
-                  : 'text-carnival-cream/50'
+                  txStatus.includes('Success') || txStatus.includes('🎉') ? 'text-green-600' 
+                  : txStatus.includes('failed') ? 'text-accent-red' 
+                  : 'text-text-secondary'
                 }`}>
                   {txStatus}
                 </p>
               )}
 
               {buyError && (
-                <p className="text-carnival-red text-sm mt-2">{buyError.message}</p>
+                <p className="text-accent-red text-sm mt-2">{buyError.message}</p>
               )}
             </div>
           )}
 
           {active && !connected && (
-            <div className="border-t border-carnival-border pt-6 text-center">
-              <p className="text-carnival-cream/40">Connect your wallet to buy tickets 🎟️</p>
+            <div className="border-t-2 border-dashed border-border-light pt-6 text-center">
+              <p className="text-text-secondary">Connect your wallet to buy tickets 🎟️</p>
             </div>
           )}
 
           {/* Winner Display */}
           {raffle.winner && (
-            <div className="mt-6 p-5 bg-carnival-gold/10 rounded-xl border border-carnival-gold/20 glow-gold">
+            <div className="mt-6 p-5 bg-accent-gold/10 rounded-lg border-2 border-accent-gold/30">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-carnival-gold font-bold text-lg flex items-center gap-2">
+                  <p className="text-accent-gold font-bold text-lg flex items-center gap-2 font-display">
                     🏆 Winner
                   </p>
-                  <p className="text-carnival-cream font-mono text-sm break-all mt-1">
+                  <p className="text-text-primary font-mono text-sm break-all mt-1">
                     {raffle.winner.toBase58()}
                   </p>
                   {raffle.winningTicket !== null && (
-                    <p className="text-carnival-amber text-sm mt-2 font-mono">
-                      Winning ticket: #{raffle.winningTicket}
+                    <p className="text-accent-gold text-sm mt-2 font-mono">
+                      Winning ticket: №{raffle.winningTicket}
                     </p>
                   )}
                 </div>
@@ -283,7 +283,7 @@ export default function RafflePage() {
                   <button
                     onClick={handleClaim}
                     disabled={claiming}
-                    className="bg-gradient-to-r from-carnival-amber to-carnival-gold text-carnival-dark font-bold py-3 px-6 rounded-xl transition-all hover:opacity-90 disabled:opacity-50 animate-glow-pulse"
+                    className="bg-accent-gold text-white font-bold py-3 px-6 rounded-lg transition-all hover:bg-accent-gold/90 disabled:opacity-50 border-2 border-border-dark shadow-[3px_3px_0_#2A2A2A]"
                   >
                     {claiming ? 'Claiming...' : '💰 Claim Prize'}
                   </button>
@@ -291,24 +291,24 @@ export default function RafflePage() {
               </div>
               
               {isWinner && !canClaim && raffle.status && 'claimed' in raffle.status && (
-                <p className="text-green-400 text-sm mt-3 font-medium">✅ Prize claimed!</p>
+                <p className="text-green-600 text-sm mt-3 font-medium">✅ Prize claimed!</p>
               )}
               
               {claimError && (
-                <p className="text-carnival-red text-sm mt-2">{claimError.message}</p>
+                <p className="text-accent-red text-sm mt-2">{claimError.message}</p>
               )}
             </div>
           )}
         </div>
 
         {/* Bottom stripe */}
-        <div className="h-2 bg-carnival-gradient" />
+        <div className="h-2 carnival-stripe-top" />
       </div>
 
       {/* Verification info */}
-      <div className="mt-6 bg-carnival-surface/50 rounded-xl p-5 border border-carnival-border">
-        <p className="text-carnival-cream/30 text-[11px] font-bold uppercase tracking-widest mb-3">On-Chain Verification</p>
-        <div className="space-y-1.5 text-xs text-carnival-cream/25 font-mono">
+      <div className="mt-6 bg-white rounded-lg p-5 border-2 border-border-light">
+        <p className="text-text-secondary text-[11px] font-bold uppercase tracking-widest mb-3">On-Chain Verification</p>
+        <div className="space-y-1.5 text-xs text-text-secondary font-mono">
           <p>Raffle: {rafflePubkey.toBase58()}</p>
           <p>Token: {raffle.tokenMint.toBase58()}</p>
           {raffle.randomnessAccount && (
