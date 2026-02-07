@@ -5,7 +5,7 @@ import { RaffleCard, RaffleCardSkeleton } from '@/components/RaffleCard';
 import { MockRaffleCard } from '@/components/MockRaffleCard';
 
 // Mock data for development (before devnet deploy)
-const MOCK_MODE = true; // Toggle to false when program is deployed
+const MOCK_MODE = false; // Program deployed to devnet!
 
 const mockRaffles = [
   {
