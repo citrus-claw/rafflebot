@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/rafflebot.json`.
  */
 export type Rafflebot = {
-  "address": "HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n",
+  "address": "HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU",
   "metadata": {
     "name": "rafflebot",
     "version": "0.1.0",
@@ -974,3 +974,98 @@ export type Rafflebot = {
     }
   ]
 };
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
+import { PublicKey } from '@solana/web3.js';
+import { BN } from '@coral-xyz/anchor';
+import IDL_JSON from './rafflebot.json';
+
+export const IDL = IDL_JSON;
+export const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
+
+export interface RaffleStatus {
+  active?: {};
+  drawCommitted?: {};
+  drawComplete?: {};
+  claimed?: {};
+  cancelled?: {};
+}
+
+export interface Raffle {
+  authority: PublicKey;
+  name: string;
+  tokenMint: PublicKey;
+  escrow: PublicKey;
+  platformWallet: PublicKey;
+  ticketPrice: BN;
+  minPot: BN;
+  maxPerWallet: number;
+  endTime: BN;
+  totalTickets: number;
+  totalPot: BN;
+  status: RaffleStatus;
+  winner: PublicKey | null;
+  winningTicket: number | null;
+  randomness: number[] | null;
+  randomnessAccount: PublicKey | null;
+  commitSlot: BN | null;
+  createdAt: BN;
+  bump: number;
+  escrowBump: number;
+}
+
+export interface Entry {
+  raffle: PublicKey;
+  buyer: PublicKey;
+  startTicketIndex: number;
+  numTickets: number;
+  isInitialized: boolean;
+  refunded: boolean;
+  bump: number;
+}
+
+export function isActive(status: RaffleStatus): boolean {
+  return !!status.active;
+}
+
+export function isDrawCommitted(status: RaffleStatus): boolean {
+  return !!status.drawCommitted;
+}
+
+export function isDrawComplete(status: RaffleStatus): boolean {
+  return !!status.drawComplete;
+}
+
+export function isClaimed(status: RaffleStatus): boolean {
+  return !!status.claimed;
+}
+
+export function isCancelled(status: RaffleStatus): boolean {
+  return !!status.cancelled;
+}
+
+export function getStatusLabel(status: RaffleStatus): string {
+  if (status.active) return 'Active';
+  if (status.drawCommitted) return 'Drawing...';
+  if (status.drawComplete) return 'Winner Drawn';
+  if (status.claimed) return 'Claimed';
+  if (status.cancelled) return 'Cancelled';
+  return 'Unknown';
+}
+
+export function getEntryPDA(raffle: PublicKey, buyer: PublicKey): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("entry"), raffle.toBuffer(), buyer.toBuffer()],
+    PROGRAM_ID
+  );
+}
+
+export function getEscrowPDA(raffle: PublicKey): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("escrow"), raffle.toBuffer()],
+    PROGRAM_ID
+  );
+}
