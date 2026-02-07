@@ -6,10 +6,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-rafflebot = "H9vqmpXacvtBt8jy4TUecJJ6QxcUogy4LMD5n9oBSHrR"
+rafflebot = "HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n"
 
 [programs.devnet]
-rafflebot = "H9vqmpXacvtBt8jy4TUecJJ6QxcUogy4LMD5n9oBSHrR"
+rafflebot = "HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 
-declare_id!("H9vqmpXacvtBt8jy4TUecJJ6QxcUogy4LMD5n9oBSHrR");
+declare_id!("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
 
 /// Platform fee: 10% (1000 basis points)
 const PLATFORM_FEE_BPS: u64 = 1000;
