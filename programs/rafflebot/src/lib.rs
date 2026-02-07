@@ -248,12 +248,19 @@ pub mod rafflebot {
         require!(entry.buyer == ctx.accounts.buyer.key(), RaffleError::NotEntryOwner);
         require!(!entry.refunded, RaffleError::AlreadyRefunded);
 
-        // Calculate refund amount
-        let refund_amount = raffle.ticket_price
+        // Calculate refund minus platform fee
+        let gross_amount = raffle.ticket_price
             .checked_mul(entry.num_tickets as u64)
             .ok_or(RaffleError::Overflow)?;
+        let platform_fee = gross_amount
+            .checked_mul(PLATFORM_FEE_BPS)
+            .ok_or(RaffleError::Overflow)?
+            .checked_div(BPS_DENOMINATOR)
+            .ok_or(RaffleError::Overflow)?;
+        let refund_amount = gross_amount
+            .checked_sub(platform_fee)
+            .ok_or(RaffleError::Overflow)?;
 
-        // Transfer refund
         let raffle_key = raffle.key();
         let seeds = &[
             b"escrow",
@@ -261,7 +268,9 @@ pub mod rafflebot {
             &[raffle.escrow_bump],
         ];
         let signer = &[&seeds[..]];
+        let decimals = ctx.accounts.token_mint.decimals;
 
+        // Transfer refund to buyer
         let cpi_accounts = TransferChecked {
             from: ctx.accounts.escrow.to_account_info(),
             to: ctx.accounts.buyer_token_account.to_account_info(),
@@ -273,13 +282,27 @@ pub mod rafflebot {
             cpi_accounts,
             signer,
         );
-        transfer_checked(cpi_ctx, refund_amount, ctx.accounts.token_mint.decimals)?;
+        transfer_checked(cpi_ctx, refund_amount, decimals)?;
+
+        // Transfer platform fee
+        let cpi_accounts = TransferChecked {
+            from: ctx.accounts.escrow.to_account_info(),
+            to: ctx.accounts.platform_token_account.to_account_info(),
+            mint: ctx.accounts.token_mint.to_account_info(),
+            authority: ctx.accounts.escrow.to_account_info(),
+        };
+        let cpi_ctx = CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            cpi_accounts,
+            signer,
+        );
+        transfer_checked(cpi_ctx, platform_fee, decimals)?;
 
         // Mark as refunded
         let entry = &mut ctx.accounts.entry;
         entry.refunded = true;
 
-        msg!("Refund claimed: {} | Amount: {}", ctx.accounts.buyer.key(), refund_amount);
+        msg!("Refund claimed: {} | Refund: {} | Fee: {}", ctx.accounts.buyer.key(), refund_amount, platform_fee);
 
         Ok(())
     }
@@ -471,6 +494,13 @@ pub struct ClaimRefund<'info> {
         constraint = buyer_token_account.mint == raffle.token_mint,
     )]
     pub buyer_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        constraint = platform_token_account.owner == raffle.platform_wallet,
+        constraint = platform_token_account.mint == raffle.token_mint,
+    )]
+    pub platform_token_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         constraint = token_mint.key() == raffle.token_mint,
