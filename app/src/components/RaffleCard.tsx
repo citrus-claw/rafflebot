@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { PublicKey } from '@solana/web3.js';
 import { BN } from '@coral-xyz/anchor';
 import { Raffle, isActive, getStatusLabel } from '@/lib/idl/rafflebot';
@@ -7,7 +8,6 @@ import { Raffle, isActive, getStatusLabel } from '@/lib/idl/rafflebot';
 interface RaffleCardProps {
   publicKey: PublicKey;
   raffle: Raffle;
-  onClick?: () => void;
 }
 
 // Format USDC amount (6 decimals)
@@ -37,7 +37,7 @@ function formatTimeRemaining(endTime: BN): string {
   return `${minutes}m`;
 }
 
-export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
+export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
   const active = isActive(raffle.status);
   const timeRemaining = formatTimeRemaining(raffle.endTime);
   const progress = raffle.minPot.toNumber() > 0 
@@ -45,10 +45,10 @@ export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
     : 100;
 
   return (
-    <div 
-      onClick={onClick}
+    <Link 
+      href={`/raffle/${publicKey.toBase58()}`}
       className={`
-        bg-gray-800 rounded-xl p-6 border border-gray-700 
+        block bg-gray-800 rounded-xl p-6 border border-gray-700 
         hover:border-purple-500 transition-all cursor-pointer
         ${active ? '' : 'opacity-75'}
       `}
@@ -112,7 +112,7 @@ export function RaffleCard({ publicKey, raffle, onClick }: RaffleCardProps) {
           </p>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
