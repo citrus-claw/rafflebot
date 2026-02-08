@@ -8,6 +8,7 @@ import { Program, AnchorProvider } from '@coral-xyz/anchor';
 import { BN } from '@coral-xyz/anchor';
 import Link from 'next/link';
 import { IDL, PROGRAM_ID, Entry, Raffle, isActive, getStatusLabel } from '@/lib/idl/rafflebot';
+import { Star, Ticket } from 'lucide-react';
 
 interface TicketEntry {
   entryPubkey: PublicKey;
@@ -37,86 +38,98 @@ function formatTimeRemaining(endTime: BN): string {
   return 'Soon';
 }
 
+/* ───── Carnival Ticket Stub ───── */
 function TicketStub({ entry: e, isWinner }: { entry: TicketEntry; isWinner: boolean }) {
   const active = isActive(e.raffle.status);
+  const isSpecial = e.entry.startTicketIndex % 2 === 0;
+  const bgClass = isSpecial ? 'bg-stripes-red' : 'bg-stripes-blue';
+  const accentColor = isSpecial ? 'text-carnival-red' : 'text-carnival-blue';
+  const borderAccent = isSpecial ? 'border-carnival-red' : 'border-carnival-blue';
 
   return (
-    <Link 
-      href={`/raffle/${e.rafflePubkey.toBase58()}`}
-      className="group block relative"
-    >
-      <div
-        className="relative overflow-hidden"
-        style={{
-          border: isWinner ? '1.6px solid #B8860B' : active ? '0.8px dashed #393939' : '0.8px dashed #D4D0C8',
-          borderRadius: '6px',
-          opacity: active || isWinner ? 1 : 0.75,
-        }}
-      >
-        <div className="p-5 pr-16">
-          <div className="flex items-start justify-between mb-3">
-            <div className="min-w-0">
-              <h3 className="text-sm text-text-primary font-bold truncate">
-                {isWinner && '★ '}{e.raffle.name}
-              </h3>
-              <p className="text-text-secondary text-[10px] mt-1">
-                №{e.rafflePubkey.toBase58().slice(0, 12)}…
-              </p>
+    <Link href={`/raffle/${e.rafflePubkey.toBase58()}`} className="group block relative mb-6 max-w-2xl mx-auto transform transition-transform hover:scale-[1.01]">
+      <div className="flex w-full shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]">
+        {/* LEFT SECTION (Main Ticket) */}
+        <div className={`flex-grow relative ${bgClass} p-1 text-paper overflow-hidden rounded-l-lg`}>
+          <div className="border-2 border-dashed border-paper/50 h-full p-4 relative flex flex-col justify-between">
+            {/* Header */}
+            <div className="flex justify-between items-start border-b-2 border-paper/30 pb-2 mb-2">
+              <div>
+                <h3 className="font-display text-2xl tracking-wide uppercase drop-shadow-md text-white">Admit One</h3>
+                <p className="text-[10px] uppercase font-bold tracking-widest opacity-90">RaffleBot Official Entry</p>
+              </div>
+              <Star className="text-gold fill-gold animate-pulse" size={24} />
             </div>
-            <span
-              className="ml-3 shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
-              style={{
-                color: isWinner ? '#B8860B' : active ? '#C41E3A' : '#8B8B6E',
-                background: isWinner ? '#B8860B15' : active ? '#C41E3A15' : '#8B8B6E15',
-                border: `0.8px solid ${isWinner ? '#B8860B40' : active ? '#C41E3A40' : '#8B8B6E40'}`,
-              }}
-            >
-              {isWinner ? 'Won!' : getStatusLabel(e.raffle.status)}
-            </span>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <p className="text-text-secondary text-[10px] uppercase tracking-wider">Tickets</p>
-              <p className="text-accent-red font-bold text-lg">{e.entry.numTickets}</p>
+            {/* Content */}
+            <div className="space-y-2 my-2">
+              <div className="bg-paper text-ink px-3 py-1 font-bold font-mono text-sm inline-block shadow-sm transform -rotate-1">
+                {e.raffle.name}
+              </div>
+              <div className="text-xs uppercase font-bold opacity-90">
+                Tickets: <span className="font-mono text-lg">{e.entry.numTickets}</span>
+                <span className="ml-3">Range: №{e.entry.startTicketIndex}–{e.entry.startTicketIndex + e.entry.numTickets - 1}</span>
+              </div>
+              <div className="text-[10px] font-mono opacity-80 break-all leading-tight">
+                Raffle: {e.rafflePubkey.toBase58().substring(0, 24)}...
+              </div>
             </div>
-            <div>
-              <p className="text-text-secondary text-[10px] uppercase tracking-wider">Range</p>
-              <p className="text-text-primary text-xs">
-                №{e.entry.startTicketIndex} – №{e.entry.startTicketIndex + e.entry.numTickets - 1}
-              </p>
+
+            {/* Footer */}
+            <div className="mt-auto pt-2 border-t-2 border-paper/30 flex justify-between items-end">
+              <div className="text-[10px] font-bold uppercase">NO REFUNDS • BEARER ASSET</div>
+              <div className="text-xs font-mono">
+                <span className="text-gold font-bold">{formatUSDC(e.raffle.totalPot)}</span> pot
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-text-secondary">
-              <span className="text-accent-red font-bold">{formatUSDC(e.raffle.totalPot)}</span> pot
-            </span>
-            {active && (
-              <span className="text-accent-red font-semibold text-[10px]">
-                {formatTimeRemaining(e.raffle.endTime)}
-              </span>
-            )}
+          {/* Perforation Circles Right Side */}
+          <div className="absolute -right-2 top-0 bottom-0 flex flex-col justify-between py-2 z-10">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="w-4 h-4 rounded-full bg-paper mb-1" />
+            ))}
           </div>
-
-          {active && e.raffle.totalTickets > 0 && (
-            <div className="mt-2 pt-2" style={{ borderTop: '0.8px dashed #D4D0C8' }}>
-              <p className="text-text-secondary text-[10px]">
-                Your odds: {((e.entry.numTickets / e.raffle.totalTickets) * 100).toFixed(1)}%
-              </p>
-            </div>
-          )}
         </div>
 
-        <div
-          className="absolute top-0 right-0 w-14 h-full flex flex-col items-center justify-center"
-          style={{ borderLeft: '0.8px dashed #393939' }}
-        >
-          <span className="text-text-secondary font-bold text-sm">
-            {e.entry.numTickets}×
-          </span>
+        {/* CENTER PERFORATION LINE */}
+        <div className="w-0 border-l-4 border-dotted border-paper/60 relative z-20" />
+
+        {/* RIGHT SECTION (The Stub) */}
+        <div className="w-28 relative bg-surface p-1 rounded-r-lg flex flex-col">
+          <div className={`h-full border-2 ${borderAccent} p-2 flex flex-col items-center justify-center gap-2 rounded-r`}>
+            <div className={`font-display text-sm uppercase ${accentColor} text-center leading-none`}>
+              Keep<br />This<br />Coupon
+            </div>
+
+            <div className={`text-3xl font-display ${accentColor}`}>
+              {e.entry.numTickets}×
+            </div>
+
+            <div className="mt-auto text-center">
+              <span className={`block text-[8px] uppercase font-bold ${accentColor}`}>
+                {active ? formatTimeRemaining(e.raffle.endTime) : getStatusLabel(e.raffle.status)}
+              </span>
+            </div>
+          </div>
+
+          {/* Perforation Circles Left Side */}
+          <div className="absolute -left-2 top-0 bottom-0 flex flex-col justify-between py-2 z-10">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="w-4 h-4 rounded-full bg-paper mb-1" />
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Winner Overlay */}
+      {isWinner && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-gold text-ink font-display text-3xl uppercase px-8 py-4 border-4 border-ink transform -rotate-12 shadow-chunky animate-bounce">
+            🎉 WINNER! 🎉
+          </div>
+        </div>
+      )}
     </Link>
   );
 }
@@ -196,8 +209,9 @@ export default function MyTicketsPage() {
   if (!connected) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-2xl text-text-primary font-bold mb-3">My Tickets</h1>
-        <p className="text-text-secondary text-sm">Connect your wallet to see your tickets</p>
+        <span className="text-6xl mb-4 block">🎟️</span>
+        <h1 className="text-3xl font-display text-carnival-red mb-3">My Stubs</h1>
+        <p className="text-ink/60 text-sm">Connect your wallet to see your ticket stubs</p>
       </div>
     );
   }
@@ -205,8 +219,8 @@ export default function MyTicketsPage() {
   if (loading) {
     return (
       <div className="text-center py-20">
-        <div className="animate-spin h-6 w-6 rounded-full mx-auto" style={{ border: '1.6px solid #393939', borderTopColor: 'transparent' }} />
-        <p className="text-text-secondary text-xs mt-4">Loading your tickets...</p>
+        <Ticket size={48} className="text-carnival-red animate-bounce mx-auto mb-4" />
+        <p className="text-ink/60 text-xs font-display uppercase tracking-widest">Fetching your stubs...</p>
       </div>
     );
   }
@@ -224,59 +238,57 @@ export default function MyTicketsPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl text-text-primary font-bold mb-2">My Tickets</h1>
-        <p className="text-text-secondary text-sm">Your raffle ticket collection</p>
+      <div className="flex items-center gap-3 mb-1">
+        <span className="text-2xl">🎟️</span>
+        <h1 className="text-3xl font-display text-ink">My Stubs</h1>
       </div>
+      <p className="text-ink/60 text-xs mb-8">Your raffle ticket collection</p>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         {[
-          { label: 'Total Tickets', value: totalTickets.toString() },
-          { label: 'Total Spent', value: `$${totalSpent.toFixed(2)}` },
-          { label: 'Wins', value: `${wins}`, accent: true },
+          { label: 'Total Tickets', value: totalTickets.toString(), color: 'text-carnival-blue' },
+          { label: 'Total Spent', value: `$${totalSpent.toFixed(2)}`, color: 'text-carnival-red' },
+          { label: 'Wins', value: `${wins}`, color: 'text-gold' },
         ].map((stat) => (
-          <div key={stat.label} className="p-5" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
-            <p className="text-text-secondary text-[10px] uppercase tracking-wider mb-1">{stat.label}</p>
-            <p className={`text-2xl font-bold ${stat.accent ? 'text-accent-gold' : 'text-text-primary'}`}>{stat.value}</p>
+          <div key={stat.label} className="bg-surface border-2 border-ink p-5 rounded-lg shadow-chunky-sm text-center">
+            <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display mb-1">{stat.label}</p>
+            <p className={`text-3xl font-display ${stat.color}`}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       {entries.length === 0 ? (
-        <div className="text-center py-16" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
-          <p className="text-text-secondary text-sm">No tickets yet</p>
-          <Link href="/" className="text-accent-red text-xs mt-3 block font-medium">
-            Browse active raffles →
+        <div className="text-center py-16 border-4 border-dotted border-ink/20 rounded-xl bg-paper">
+          <span className="text-6xl mb-4 block">🎪</span>
+          <p className="text-ink/60 font-display text-lg">No tickets yet</p>
+          <Link href="/" className="text-carnival-red text-xs mt-3 block font-display uppercase tracking-widest">
+            Visit the Midway →
           </Link>
         </div>
       ) : (
         <>
           {activeEntries.length > 0 && (
             <div className="mb-10">
-              <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-base text-text-primary font-bold">Active Entries</h2>
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-red" />
+              <div className="flex items-center gap-2 mb-6">
+                <h2 className="text-xl font-display text-carnival-red uppercase">Active Entries</h2>
+                <span className="w-2 h-2 rounded-full bg-carnival-red animate-pulse" />
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {activeEntries.map((e) => (
-                  <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={false} />
-                ))}
-              </div>
+              {activeEntries.map((e) => (
+                <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={false} />
+              ))}
             </div>
           )}
 
           {pastEntries.length > 0 && (
             <div>
-              <h2 className="text-base text-text-secondary font-bold mb-4">Past Entries</h2>
-              <div className="grid gap-4 md:grid-cols-2">
-                {pastEntries.map((e) => {
-                  const isWinner = !!(e.raffle.winner && e.raffle.winner.equals(publicKey!));
-                  return (
-                    <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={isWinner} />
-                  );
-                })}
-              </div>
+              <h2 className="text-xl font-display text-ink/60 uppercase mb-6">Past Entries</h2>
+              {pastEntries.map((e) => {
+                const isWinner = !!(e.raffle.winner && e.raffle.winner.equals(publicKey!));
+                return (
+                  <TicketStub key={e.entryPubkey.toBase58()} entry={e} isWinner={isWinner} />
+                );
+              })}
             </div>
           )}
         </>

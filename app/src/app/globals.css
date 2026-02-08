@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Rye&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #FBF7EB;
-  --text: #141414;
-  --border: #393939;
-  --accent: #8B4513;
-  --accent-gold: #B8860B;
-  --muted: #8B8B6E;
+  --bg: #F4E4BC;
+  --text: #1a1a1a;
+  --border: #1a1a1a;
+  --accent: #D9381E;
+  --accent-gold: #F2A900;
+  --muted: #6b6344;
+  --surface: #FFF8E7;
 }
 
 * {
@@ -21,56 +22,62 @@ body {
   color: var(--text);
   background: var(--bg);
   font-family: "IBM Plex Mono", monospace;
+  background-image: radial-gradient(#e0d0aa 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* === WALLET ADAPTER OVERRIDES === */
 .wallet-adapter-button {
-  background: var(--border) !important;
-  border-radius: 6px !important;
+  background: #004E7C !important;
+  border-radius: 8px !important;
   font-family: "IBM Plex Mono", monospace !important;
   font-weight: 600 !important;
-  border: 2.4px solid var(--border) !important;
-  color: var(--bg) !important;
+  border: 2px solid #1a1a1a !important;
+  color: #FFF8E7 !important;
   font-size: 13px !important;
+  box-shadow: 2px 2px 0px 0px #1a1a1a !important;
 }
 
 .wallet-adapter-button:hover {
-  background: var(--text) !important;
+  background: #1a1a1a !important;
 }
 
 .wallet-adapter-modal-wrapper {
-  background: var(--bg) !important;
-  border: 1.6px solid var(--border) !important;
-  border-radius: 6px !important;
+  background: #FFF8E7 !important;
+  border: 2px solid #1a1a1a !important;
+  border-radius: 8px !important;
   font-family: "IBM Plex Mono", monospace !important;
 }
 
 .wallet-adapter-modal-title {
-  color: var(--text) !important;
-  font-family: "IBM Plex Mono", monospace !important;
+  color: #1a1a1a !important;
+  font-family: "Rye", serif !important;
 }
 
 .wallet-adapter-modal-list li {
   background: transparent !important;
-  border: 0.8px solid var(--border) !important;
-  border-radius: 6px !important;
+  border: 2px solid #1a1a1a !important;
+  border-radius: 8px !important;
   margin-bottom: 4px !important;
 }
 
 /* === SCROLLBAR === */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: #F4E4BC;
+  border-left: 2px solid #1a1a1a;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: #D9381E;
+  border: 2px solid #F4E4BC;
+  border-radius: 99px;
 }
 
 /* === SELECTION === */
 ::selection {
-  background: rgba(139, 69, 19, 0.15);
-  color: var(--text);
+  background: #D9381E;
+  color: white;
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RaffleBot | The Grand On-Chain Lottery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Rye&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              paper: '#F4E4BC',
+              ink: '#1a1a1a',
+              'carnival-red': '#D9381E',
+              'carnival-blue': '#004E7C',
+              'gold': '#F2A900',
+              surface: '#FFF8E7',
+            },
+            fontFamily: {
+              mono: ['"IBM Plex Mono"', 'monospace'],
+              display: ['"Rye"', 'serif'],
+            },
+            backgroundImage: {
+              'stripes-red': 'repeating-linear-gradient(45deg, #D9381E, #D9381E 10px, #C22F17 10px, #C22F17 20px)',
+              'stripes-blue': 'repeating-linear-gradient(45deg, #004E7C, #004E7C 10px, #003D61 10px, #003D61 20px)',
+            },
+            boxShadow: {
+              'ticket': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #F4E4BC;
+        color: #1a1a1a;
+        font-family: 'IBM Plex Mono', monospace;
+        background-image: radial-gradient(#e0d0aa 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #F4E4BC; 
+        border-left: 2px solid #1a1a1a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D9381E; 
+        border: 2px solid #F4E4BC;
+        border-radius: 99px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
