@@ -176,7 +176,7 @@ function RaffleListSection({ children, isEmpty, loading: isLoading, error: err }
  <p className="text-ink/40 text-[10px] mt-1">Check back soon — new raffles created regularly.</p>
  </div>
  ) : (
- <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+ <div className="grid gap-6 md:grid-cols-2">
  {children}
  </div>
  )}
@@ -204,7 +204,7 @@ export default function Home() {
  {mockEnded.length > 0 && (
  <div className="space-y-4 pt-8">
  <h3 className="text-2xl font-display text-ink/60 mb-2">Previous Shows</h3>
- <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+ <div className="grid gap-6 md:grid-cols-2">
  {mockEnded.map((raffle) => (
  <MockRaffleCard key={raffle.id} raffle={raffle} />
  ))}
@@ -239,7 +239,7 @@ export default function Home() {
  {endedRaffles.length > 0 && (
  <div className="space-y-4 pt-8">
  <h3 className="text-2xl font-display text-ink/60 mb-2">Previous Shows</h3>
- <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+ <div className="grid gap-6 md:grid-cols-2">
  {endedRaffles.map((raffle) => (
  <RaffleCard
  key={raffle.publicKey.toBase58()}

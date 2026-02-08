@@ -3,132 +3,240 @@
 import Link from 'next/link';
 import { PublicKey } from '@solana/web3.js';
 import { Raffle, isActive, getStatusLabel } from '@/lib/idl/rafflebot';
-import { ChevronRight, Star } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { formatUSDC, formatTimeRemaining } from '@/lib/format';
 
 interface RaffleCardProps {
- publicKey: PublicKey;
- raffle: Raffle;
+  publicKey: PublicKey;
+  raffle: Raffle;
+}
+
+function ScallopRow({ count = 14 }: { count?: number }) {
+  return (
+    <div className="flex justify-around" style={{ margin: '0 6px' }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-full bg-paper"
+          style={{ width: 10, height: 10, marginTop: -5, position: 'relative', zIndex: 10 }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ScallopRowBottom({ count = 14 }: { count?: number }) {
+  return (
+    <div className="flex justify-around" style={{ margin: '0 6px' }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-full bg-paper"
+          style={{ width: 10, height: 10, marginBottom: -5, position: 'relative', zIndex: 10 }}
+        />
+      ))}
+    </div>
+  );
 }
 
 export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
- const active = isActive(raffle.status);
- const timeRemaining = formatTimeRemaining(raffle.endTime);
- const progress = raffle.minPot.toNumber() > 0
- ? Math.min(100, (raffle.totalPot.toNumber() / raffle.minPot.toNumber()) * 100)
- : 100;
+  const active = isActive(raffle.status);
+  const timeRemaining = formatTimeRemaining(raffle.endTime);
+  const progress = raffle.minPot.toNumber() > 0
+    ? Math.min(100, (raffle.totalPot.toNumber() / raffle.minPot.toNumber()) * 100)
+    : 100;
 
- return (
- <Link
- href={`/raffle/${publicKey.toBase58()}`}
- className="group block relative"
- >
- <div className={cn(
-"bg-surface border-2 border-ink rounded-sm overflow-hidden transition-transform",
- !active &&"opacity-75"
- )}>
- <div className="h-1.5 bg-stripes-red"/>
+  if (active) {
+    return (
+      <Link href={`/raffle/${publicKey.toBase58()}`} className="group block w-full max-w-sm">
+        {/* Top scallops */}
+        <div className="rounded-t-xl bg-carnival-red" style={{ paddingTop: 1 }}>
+          <ScallopRow />
+        </div>
 
- <div className="p-5">
- <div className="flex justify-between items-start mb-4">
- <div className="flex-1 min-w-0">
- <h3 className="text-sm font-display text-carnival-blue group-hover:text-carnival-red transition-colors truncate uppercase">
- {raffle.name}
- </h3>
- <p className="text-ink/40 text-[10px] font-mono mt-0.5">
- {publicKey.toBase58().slice(0, 8)}
- </p>
- </div>
- <span className={cn(
-"ml-3 shrink-0 inline-block px-3 py-1 text-[10px] uppercase font-bold rounded-sm border-2",
- active ?"bg-white text-green-700 border-green-700":"bg-ink text-gold border-ink"
- )}>
- {getStatusLabel(raffle.status)}
- </span>
- </div>
+        <div className="overflow-hidden bg-carnival-red shadow-xl">
+          <div className="px-5 pt-2 pb-4">
+            {/* Header */}
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-800 text-xs font-black text-red-200">
+                  R
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-red-200/60">
+                  Raffle #{publicKey.toBase58().slice(0, 8)}
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />
+                <span className="text-[10px] font-bold uppercase text-white">Open</span>
+              </div>
+            </div>
 
- <div className="grid grid-cols-2 gap-3 mb-4">
- <div>
- <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display">Jackpot</p>
- <p className="text-carnival-red font-bold text-lg font-mono">{formatUSDC(raffle.totalPot)}</p>
- </div>
- <div>
- <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display">Per Ticket</p>
- <p className="text-ink font-semibold text-base font-mono">{formatUSDC(raffle.ticketPrice)}</p>
- </div>
- </div>
+            {/* Name */}
+            <h3 className="mb-3 text-balance text-2xl font-black leading-tight text-white">
+              {raffle.name}
+            </h3>
 
- <div className="flex items-center justify-between text-xs">
- <span className="text-ink/60">
- <span className="text-ink font-bold">{raffle.totalTickets}</span> tickets sold
- </span>
- <div className="flex items-center gap-2">
- {active && (
- <span className="text-carnival-red font-semibold">
- {timeRemaining}
- </span>
- )}
- <div className="bg-carnival-blue text-white p-1.5 rounded-sm group-hover:bg-carnival-red group-hover:scale-110 transition-all">
- <ChevronRight size={14} />
- </div>
- </div>
- </div>
+            {/* Prize card */}
+            <div className="mb-3 overflow-hidden rounded-xl bg-white/15 backdrop-blur-sm">
+              <div className="grid grid-cols-2">
+                <div className="border-r border-white/10 p-3 text-center">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-red-200/70">
+                    Prize Pool
+                  </div>
+                  <div className="text-2xl font-black text-white">
+                    {formatUSDC(raffle.totalPot)}
+                  </div>
+                </div>
+                <div className="p-3 text-center">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-red-200/70">
+                    Per Ticket
+                  </div>
+                  <div className="text-2xl font-black text-white">
+                    {formatUSDC(raffle.ticketPrice)}
+                  </div>
+                </div>
+              </div>
+            </div>
 
- {active && (
- <div className="mt-3">
- <div className="h-2 bg-paper rounded-sm overflow-hidden border border-ink/10">
- <div
- className="h-full rounded-sm bg-gold"
- style={{ width: `${progress}%` }}
- />
- </div>
- <p className="text-[10px] text-ink/50 mt-1">
- {Math.round(progress)}% of min pot
- </p>
- </div>
- )}
+            {/* Progress + stats */}
+            <div className="mb-3">
+              <div className="mb-1.5 flex items-center justify-between text-xs">
+                <span className="text-red-100">
+                  <strong className="text-white">{raffle.totalTickets}</strong> tickets sold
+                </span>
+                {timeRemaining !== 'Ended' && (
+                  <span className="rounded bg-white/15 px-2 py-0.5 font-mono text-[10px] font-bold text-white">
+                    {timeRemaining}
+                  </span>
+                )}
+              </div>
+              <div className="h-2.5 overflow-hidden rounded-full bg-red-800/50">
+                <div
+                  className="h-full rounded-full bg-white/80 transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-right text-[9px] text-red-200/60">
+                {Math.round(progress)}% of min pot
+              </div>
+            </div>
 
- {raffle.winner && (
- <div className="mt-4 p-3 bg-gold/10 border-2 border-gold rounded-sm">
- <div className="flex items-center gap-1">
- <Star size={12} className="fill-gold text-gold"/>
- <p className="text-gold text-xs font-bold font-display uppercase">Winner</p>
- </div>
- <p className="text-ink text-[10px] truncate mt-1 font-mono">
- {raffle.winner.toBase58()}
- </p>
- </div>
- )}
- </div>
- </div>
- </Link>
- );
+            {/* CTA */}
+            <button className="w-full rounded-xl bg-white py-2.5 text-sm font-black uppercase tracking-wider text-carnival-red transition hover:bg-red-50">
+              Enter Raffle ›
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom scallops */}
+        <div className="rounded-b-xl bg-carnival-red" style={{ paddingBottom: 1 }}>
+          <ScallopRowBottom />
+        </div>
+      </Link>
+    );
+  }
+
+  return (
+    <Link href={`/raffle/${publicKey.toBase58()}`} className="group block w-full max-w-sm">
+      {/* Top scallops */}
+      <div className="rounded-t-xl bg-stone-400" style={{ paddingTop: 1 }}>
+        <ScallopRow />
+      </div>
+
+      <div className="relative overflow-hidden bg-stone-400 shadow-xl">
+        {/* Diagonal "ENDED" banner */}
+        <div
+          className="absolute top-[18px] -right-[32px] z-20 rotate-45 bg-carnival-red px-10 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg"
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}
+        >
+          {getStatusLabel(raffle.status)}
+        </div>
+
+        <div className="px-5 pt-2 pb-4">
+          {/* Header */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-500 text-xs font-black text-stone-300">
+                R
+              </div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+                Raffle #{publicKey.toBase58().slice(0, 8)}
+              </div>
+            </div>
+          </div>
+
+          {/* Name */}
+          <h3 className="mb-3 text-balance text-2xl font-black leading-tight text-stone-600">
+            {raffle.name}
+          </h3>
+
+          {/* Prize card */}
+          <div className="mb-3 overflow-hidden rounded-xl bg-stone-500/30">
+            <div className="grid grid-cols-2">
+              <div className="border-r border-stone-500/30 p-3 text-center">
+                <div className="text-[9px] font-bold uppercase tracking-widest text-stone-500">
+                  Prize Pool
+                </div>
+                <div className="text-2xl font-black text-stone-600">
+                  {formatUSDC(raffle.totalPot)}
+                </div>
+              </div>
+              <div className="p-3 text-center">
+                <div className="text-[9px] font-bold uppercase tracking-widest text-stone-500">
+                  Per Ticket
+                </div>
+                <div className="text-2xl font-black text-stone-600">
+                  {formatUSDC(raffle.ticketPrice)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="mb-3 text-xs text-stone-500">
+            <strong className="text-stone-600">{raffle.totalTickets}</strong> tickets sold
+          </div>
+
+          {/* Winner */}
+          {raffle.winner && (
+            <div className="rounded-xl border border-amber-600/20 bg-stone-500/30 p-3 text-center">
+              <div className="text-[9px] font-bold uppercase tracking-wider text-amber-700/50">
+                ★ Winner ★
+              </div>
+              <div className="mt-1 font-mono text-base font-black text-stone-700">
+                {raffle.winner.toBase58().slice(0, 4)}...{raffle.winner.toBase58().slice(-4)}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom scallops */}
+      <div className="rounded-b-xl bg-stone-400" style={{ paddingBottom: 1 }}>
+        <ScallopRowBottom />
+      </div>
+    </Link>
+  );
 }
 
 export function RaffleCardSkeleton() {
- return (
- <div className="bg-surface border-2 border-ink rounded-sm overflow-hidden animate-pulse">
- <div className="h-1.5 bg-paper"/>
- <div className="p-5">
- <div className="flex justify-between items-start mb-4">
- <div>
- <div className="h-4 w-32 bg-paper rounded-sm"/>
- <div className="h-3 w-20 bg-paper rounded-sm mt-2 opacity-50"/>
- </div>
- <div className="h-6 w-14 bg-paper rounded-sm"/>
- </div>
- <div className="grid grid-cols-2 gap-3">
- <div>
- <div className="h-3 w-14 bg-paper rounded-sm mb-1 opacity-50"/>
- <div className="h-5 w-24 bg-paper rounded-sm"/>
- </div>
- <div>
- <div className="h-3 w-14 bg-paper rounded-sm mb-1 opacity-50"/>
- <div className="h-5 w-20 bg-paper rounded-sm"/>
- </div>
- </div>
- </div>
- </div>
- );
+  return (
+    <div className="w-full max-w-sm">
+      <div className="rounded-t-xl bg-carnival-red/30" style={{ paddingTop: 1 }}>
+        <ScallopRow />
+      </div>
+      <div className="animate-pulse overflow-hidden bg-carnival-red/30 px-5 py-6">
+        <div className="mb-3 flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-white/10" />
+          <div className="h-3 w-24 rounded bg-white/10" />
+        </div>
+        <div className="mb-3 h-6 w-40 rounded bg-white/10" />
+        <div className="mb-3 rounded-xl bg-white/10 p-6" />
+        <div className="h-2.5 rounded-full bg-white/10" />
+      </div>
+      <div className="rounded-b-xl bg-carnival-red/30" style={{ paddingBottom: 1 }}>
+        <ScallopRowBottom />
+      </div>
+    </div>
+  );
 }
