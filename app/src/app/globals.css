@@ -14,14 +14,9 @@
   --surface: #FFF8E7;
 }
 
-* {
-  font-family: "IBM Plex Mono", monospace;
-}
-
 body {
   color: var(--text);
   background: var(--bg);
-  font-family: "IBM Plex Mono", monospace;
   background-image: radial-gradient(#e0d0aa 1px, transparent 1px);
   background-size: 20px 20px;
 }
@@ -29,13 +24,15 @@ body {
 /* === WALLET ADAPTER OVERRIDES === */
 .wallet-adapter-button {
   background: #004E7C !important;
-  border-radius: 8px !important;
+  border-radius: 0.125rem !important;
   font-family: "IBM Plex Mono", monospace !important;
   font-weight: 600 !important;
-  border: 2px solid #1a1a1a !important;
+  border: 2px dashed #1a1a1a !important;
   color: #FFF8E7 !important;
-  font-size: 13px !important;
-  box-shadow: 2px 2px 0px 0px #1a1a1a !important;
+  font-size: 11px !important;
+  height: 36px !important;
+  padding: 0 16px !important;
+  line-height: 1 !important;
 }
 
 .wallet-adapter-button:hover {
@@ -44,8 +41,8 @@ body {
 
 .wallet-adapter-modal-wrapper {
   background: #FFF8E7 !important;
-  border: 2px solid #1a1a1a !important;
-  border-radius: 8px !important;
+  border: 2px dashed #1a1a1a !important;
+  border-radius: 0.125rem !important;
   font-family: "IBM Plex Mono", monospace !important;
 }
 
@@ -56,8 +53,8 @@ body {
 
 .wallet-adapter-modal-list li {
   background: transparent !important;
-  border: 2px solid #1a1a1a !important;
-  border-radius: 8px !important;
+  border: 2px dashed #1a1a1a !important;
+  border-radius: 0.125rem !important;
   margin-bottom: 4px !important;
 }
 
