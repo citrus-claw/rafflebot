@@ -18,20 +18,20 @@ export function Navbar() {
  ];
 
  return (
- <header className="border-b-2 border-dashed border-ink bg-surface sticky top-0 z-50">
+ <header className="border-b-2 border-ink bg-surface sticky top-0 z-50">
  <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
  <Link href="/"className="shrink-0">
  <h1 className="text-2xl font-display text-carnival-red tracking-wide leading-none">RAFFLE BOT</h1>
  </Link>
 
- <nav className="hidden md:flex items-center border-2 border-dashed border-ink rounded-sm bg-paper">
+ <nav className="hidden md:flex items-center border-2 border-ink rounded-sm bg-paper">
  {links.map((item, i) => (
  <Link
  key={item.href}
  href={item.href}
  className={cn(
 "flex items-center gap-2 text-xs font-bold tracking-wider uppercase transition-all px-5 h-9",
- i < links.length - 1 &&"border-r-2 border-dashed border-ink",
+ i < links.length - 1 &&"border-r-2 border-ink",
  pathname === item.href ?"text-carnival-red bg-surface":"text-ink/60 hover:text-ink hover:bg-surface/50"
  )}
  >
@@ -42,7 +42,7 @@ export function Navbar() {
  </nav>
 
  <div className="flex items-center gap-3">
- <div className="hidden md:flex items-center text-[10px] font-bold uppercase border-2 border-dashed border-ink text-carnival-blue rounded-sm px-4 h-9 bg-white">
+ <div className="hidden md:flex items-center text-[10px] font-bold uppercase border-2 border-ink text-carnival-blue rounded-sm px-4 h-9 bg-white">
  <span className="w-2 h-2 bg-carnival-blue rounded-full inline-block mr-2 animate-bounce"/>
  Devnet
  </div>
@@ -66,7 +66,7 @@ export function Navbar() {
  </div>
 
  {mobileOpen && (
- <div className="md:hidden px-6 py-4 space-y-1 border-t-2 border-dashed border-ink bg-paper">
+ <div className="md:hidden px-6 py-4 space-y-1 border-t-2 border-ink bg-paper">
  {links.map((link) => (
  <Link
  key={link.href}

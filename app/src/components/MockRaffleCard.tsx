@@ -50,7 +50,7 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
  return (
  <div onClick={onClick} className="group relative cursor-pointer">
  <div className={cn(
-"bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden transition-transform",
+"bg-surface border-2 border-ink rounded-sm overflow-hidden transition-transform",
  !active &&"opacity-75"
  )}>
  <div className="h-1.5 bg-stripes-red"/>

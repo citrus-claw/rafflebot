@@ -25,7 +25,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
  className="group block relative"
  >
  <div className={cn(
-"bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden transition-transform",
+"bg-surface border-2 border-ink rounded-sm overflow-hidden transition-transform",
  !active &&"opacity-75"
  )}>
  <div className="h-1.5 bg-stripes-red"/>
@@ -108,7 +108,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
 
 export function RaffleCardSkeleton() {
  return (
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden animate-pulse">
+ <div className="bg-surface border-2 border-ink rounded-sm overflow-hidden animate-pulse">
  <div className="h-1.5 bg-paper"/>
  <div className="p-5">
  <div className="flex justify-between items-start mb-4">

@@ -138,7 +138,7 @@ export default function RafflePage() {
  <div className="flex-1 min-w-0 space-y-6">
 
  {/* Prize Pool Progress */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-5">
+ <div className="bg-surface border-2 border-ink rounded-sm p-5">
  <div className="flex items-baseline justify-between mb-4">
  <div>
  <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display">Total Prize Pool</p>
@@ -159,7 +159,7 @@ export default function RafflePage() {
  </div>
 
  {/* Raffle Details Table */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden">
+ <div className="bg-surface border-2 border-ink rounded-sm overflow-hidden">
  <div className="bg-carnival-blue px-5 py-3 border-b-2 border-ink">
  <h2 className="text-sm font-display text-white uppercase tracking-wider">Raffle Details</h2>
  </div>
@@ -177,7 +177,7 @@ export default function RafflePage() {
 
  {/* Buy Tickets Section */}
  {active && connected && (
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-5">
+ <div className="bg-surface border-2 border-ink rounded-sm p-5">
  <h2 className="text-sm font-display text-carnival-red uppercase tracking-wider mb-4">Buy Tickets</h2>
 
  <div className="flex gap-3 items-end mb-3">
@@ -189,7 +189,7 @@ export default function RafflePage() {
  max={maxTickets}
  value={ticketCount}
  onChange={(e) => setTicketCount(Math.max(1, Math.min(maxTickets, parseInt(e.target.value) || 1)))}
- className="w-full bg-paper border-2 border-dashed border-ink rounded-sm px-3 py-2 text-carnival-red text-lg font-bold font-mono focus:outline-none focus:ring-2 focus:ring-gold"
+ className="w-full bg-paper border-2 border-ink rounded-sm px-3 py-2 text-carnival-red text-lg font-bold font-mono focus:outline-none focus:ring-2 focus:ring-gold"
  />
  </div>
  <div className="flex gap-1.5 pb-0.5">
@@ -220,7 +220,7 @@ export default function RafflePage() {
  <button
  onClick={handleBuy}
  disabled={buying || maxTickets <= 0}
- className="w-full py-3 text-xs font-bold font-display uppercase tracking-widest text-white bg-carnival-blue rounded-sm border-2 border-dashed border-ink hover:bg-ink transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+ className="w-full py-3 text-xs font-bold font-display uppercase tracking-widest text-white bg-carnival-blue rounded-sm border-2 border-ink hover:bg-ink transition-all disabled:opacity-50 disabled:cursor-not-allowed"
  >
  {buying ? 'Processing...' : `Buy ${ticketCount} Ticket${ticketCount > 1 ? 's' : ''}`}
  </button>
@@ -241,7 +241,7 @@ export default function RafflePage() {
  )}
 
  {active && !connected && (
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-5 text-center">
+ <div className="bg-surface border-2 border-ink rounded-sm p-5 text-center">
  <p className="text-ink/60 text-xs font-display">Connect your wallet to buy tickets</p>
  </div>
  )}
@@ -264,7 +264,7 @@ export default function RafflePage() {
  <button
  onClick={handleClaim}
  disabled={claiming}
- className="text-white font-bold font-display py-2 px-4 text-[10px] uppercase bg-carnival-red rounded-sm border-2 border-dashed border-ink disabled:opacity-50"
+ className="text-white font-bold font-display py-2 px-4 text-[10px] uppercase bg-carnival-red rounded-sm border-2 border-ink disabled:opacity-50"
  >
  {claiming ? 'Claiming...' : 'Claim Prize'}
  </button>
@@ -278,7 +278,7 @@ export default function RafflePage() {
  )}
 
  {/* On-Chain Verification */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden">
+ <div className="bg-surface border-2 border-ink rounded-sm overflow-hidden">
  <div className="bg-ink px-5 py-3">
  <div className="flex items-center gap-2">
  <Shield size={14} className="text-gold"/>
@@ -314,7 +314,7 @@ export default function RafflePage() {
  <div className="w-full md:w-72 flex-shrink-0 space-y-5">
 
  {/* About Raffle */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-4">
+ <div className="bg-surface border-2 border-ink rounded-sm p-4">
  <h3 className="text-xs font-display text-ink uppercase tracking-wider mb-3 pb-2 border-b-2 border-ink">
  About This Raffle
  </h3>
@@ -327,7 +327,7 @@ export default function RafflePage() {
  </div>
 
  {/* Raffle Info */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-4">
+ <div className="bg-surface border-2 border-ink rounded-sm p-4">
  <h3 className="text-xs font-display text-ink uppercase tracking-wider mb-3 pb-2 border-b-2 border-ink">
  Raffle Info
  </h3>
@@ -365,7 +365,7 @@ export default function RafflePage() {
  )}
 
  {/* Fairness */}
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm p-4">
+ <div className="bg-surface border-2 border-ink rounded-sm p-4">
  <h3 className="text-xs font-display text-ink uppercase tracking-wider mb-3 pb-2 border-b-2 border-ink">
  Fairness
  </h3>

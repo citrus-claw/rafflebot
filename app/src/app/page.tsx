@@ -45,7 +45,7 @@ const mockRaffles = [
 /* ───── Carnival Masthead ───── */
 function Masthead() {
  return (
- <section className="relative bg-surface border-2 border-dashed border-ink rounded-sm p-8 md:p-12 overflow-hidden">
+ <section className="relative bg-surface border-2 border-ink rounded-sm p-8 md:p-12 overflow-hidden">
  <div className="absolute top-0 right-0 w-64 h-64 bg-carnival-red opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"/>
 
  <div className="relative z-10 grid md:grid-cols-12 gap-8 items-center">
@@ -83,11 +83,11 @@ function Masthead() {
 /* ───── Sidebar Rules ───── */
 function RulesCard() {
  return (
- <div className="bg-surface border-2 border-dashed border-ink p-6 text-center rounded-sm">
- <h3 className="font-display text-2xl text-carnival-red uppercase mb-6 border-b-2 border-dashed border-ink pb-2">The Rules of the Game</h3>
+ <div className="bg-surface border-2 border-ink p-6 text-center rounded-sm">
+ <h3 className="font-display text-2xl text-carnival-red uppercase mb-6 border-b-2 border-ink pb-2">The Rules of the Game</h3>
  <ul className="space-y-6 text-left">
  <li className="flex gap-4 items-start">
- <div className="bg-gold p-2 rounded-sm border-2 border-dashed border-ink shrink-0">
+ <div className="bg-gold p-2 rounded-sm border-2 border-ink shrink-0">
  <Cpu size={16} className="text-ink"/>
  </div>
  <div>
@@ -98,7 +98,7 @@ function RulesCard() {
  </div>
  </li>
  <li className="flex gap-4 items-start">
- <div className="bg-gold p-2 rounded-sm border-2 border-dashed border-ink shrink-0">
+ <div className="bg-gold p-2 rounded-sm border-2 border-ink shrink-0">
  <Lock size={16} className="text-ink"/>
  </div>
  <div>
@@ -109,7 +109,7 @@ function RulesCard() {
  </div>
  </li>
  <li className="flex gap-4 items-start">
- <div className="bg-gold p-2 rounded-sm border-2 border-dashed border-ink shrink-0">
+ <div className="bg-gold p-2 rounded-sm border-2 border-ink shrink-0">
  <Ticket size={16} className="text-ink"/>
  </div>
  <div>
@@ -127,7 +127,7 @@ function RulesCard() {
 /* ───── Stats Card ───── */
 function StatsCard() {
  return (
- <div className="bg-carnival-red text-white border-2 border-dashed border-white rounded-sm p-6">
+ <div className="bg-carnival-red text-white border-2 border-white rounded-sm p-6">
  <h3 className="font-display text-xl uppercase tracking-wide mb-4 text-center">Fairground Pulse</h3>
  <div className="space-y-3 font-mono text-sm">
  <div className="flex justify-between border-b border-dashed border-white/20 pb-2">
@@ -159,19 +159,19 @@ function RaffleListSection({ children, isEmpty, loading: isLoading, error: err }
  <h3 className="text-2xl font-display text-ink mb-2">Now Showing</h3>
 
  {isLoading ? (
- <div className="h-64 flex items-center justify-center border-2 border-dashed border-ink/20 rounded-sm bg-paper">
+ <div className="h-64 flex items-center justify-center border-2 border-ink/20 rounded-sm bg-paper">
  <div className="flex flex-col items-center gap-4 text-carnival-red">
  <Ticket size={48} className="animate-bounce"/>
  <span className="font-display text-xl uppercase tracking-widest">Loading the Attractions...</span>
  </div>
  </div>
  ) : err ? (
- <div className="text-center py-10 border-2 border-dashed border-ink rounded-sm bg-surface">
+ <div className="text-center py-10 border-2 border-ink rounded-sm bg-surface">
  <p className="text-carnival-red text-xs font-display">Failed to load raffles</p>
  <p className="text-ink/60 text-[10px] mt-1">{err.message}</p>
  </div>
  ) : isEmpty ? (
- <div className="text-center py-14 border-2 border-dashed border-ink/20 rounded-sm bg-paper">
+ <div className="text-center py-14 border-2 border-ink/20 rounded-sm bg-paper">
  <p className="text-ink/60 text-sm font-display">The curtains are closed for now...</p>
  <p className="text-ink/40 text-[10px] mt-1">Check back soon — new raffles created regularly.</p>
  </div>

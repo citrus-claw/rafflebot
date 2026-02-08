@@ -43,7 +43,7 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
  return (
  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
  <div className="max-w-sm w-full bg-carnival-red p-1 rounded-sm">
- <div className="bg-surface border-2 border-dashed border-ink p-8 rounded-sm text-center">
+ <div className="bg-surface border-2 border-ink p-8 rounded-sm text-center">
  <div className="flex justify-center mb-4 animate-bounce">
  <Star size={64} className="fill-gold text-ink"/>
  </div>
@@ -86,7 +86,7 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
  return (
  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
  <div className="bg-carnival-red p-1 rounded-sm max-w-md w-full">
- <div className="bg-surface border-2 border-dashed border-ink p-6 rounded-sm">
+ <div className="bg-surface border-2 border-ink p-6 rounded-sm">
  <div className="text-center mb-6 border-b-2 border-ink/10 pb-4">
  <h3 className="text-2xl font-display uppercase text-carnival-red">Ticket Booth</h3>
  <p className="text-xs font-bold uppercase text-ink/50 tracking-widest mt-1">Get Your Entry Here</p>
@@ -107,7 +107,7 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
  onChange={(e) =>
  setQuantity(Math.min(raffle.maxPerWallet, Math.max(1, parseInt(e.target.value) || 1)))
  }
- className="w-full border-2 border-dashed border-ink rounded-sm p-3 font-mono text-2xl text-center focus:outline-none focus:ring-4 focus:ring-gold bg-paper"
+ className="w-full border-2 border-ink rounded-sm p-3 font-mono text-2xl text-center focus:outline-none focus:ring-4 focus:ring-gold bg-paper"
  />
  <div className="absolute top-1/2 right-4 -translate-y-1/2 text-ink/30">
  <TicketIcon size={20} />
@@ -132,7 +132,7 @@ export function BuyTicketsModal({ raffle, onClose }: BuyTicketsModalProps) {
  ))}
  </div>
 
- <div className="bg-paper rounded-sm p-4 space-y-2 text-sm border-2 border-dashed border-ink/10 font-mono">
+ <div className="bg-paper rounded-sm p-4 space-y-2 text-sm border-2 border-ink/10 font-mono">
  <div className="flex justify-between">
  <span className="text-ink/60">Price per Ticket</span>
  <span className="font-bold">${raffle.ticketPrice} USDC</span>

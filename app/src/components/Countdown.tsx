@@ -51,7 +51,7 @@ export function Countdown({ endTime }: CountdownProps) {
 
 function TimeBlock({ value, label }: { value: number; label: string }) {
  return (
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm px-3 py-2 min-w-[52px] text-center">
+ <div className="bg-surface border-2 border-ink rounded-sm px-3 py-2 min-w-[52px] text-center">
  <span className="text-gold font-mono font-bold text-xl block leading-none">
  {value.toString().padStart(2,"0")}
  </span>

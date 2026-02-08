@@ -61,7 +61,7 @@ function HistoryCard({ raffle }: { raffle: RaffleWithKey }) {
 
  return (
  <Link href={`/raffle/${raffle.publicKey.toBase58()}`} className="block">
- <div className="bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden">
+ <div className="bg-surface border-2 border-ink rounded-sm overflow-hidden">
  <div className="h-1 bg-stripes-red"/>
  <div className="p-4">
  <div className="flex justify-between items-start mb-2">
@@ -121,7 +121,7 @@ export default function HistoryPage() {
  { label: 'Completed Raffles', value: totalRaffles.toString(), color: 'text-carnival-red' },
  { label: 'Tickets Sold', value: totalTicketsSold.toLocaleString(), color: 'text-carnival-blue' },
  ].map((stat) => (
- <div key={stat.label} className="bg-surface border-2 border-dashed border-ink p-4 rounded-sm text-center">
+ <div key={stat.label} className="bg-surface border-2 border-ink p-4 rounded-sm text-center">
  <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display mb-1">{stat.label}</p>
  <p className={cn("text-2xl font-display", stat.color)}>{stat.value}</p>
  </div>
@@ -136,7 +136,7 @@ export default function HistoryPage() {
  </div>
  </div>
  ) : error ? (
- <div className="text-center py-12 border-2 border-dashed border-ink rounded-sm bg-surface">
+ <div className="text-center py-12 border-2 border-ink rounded-sm bg-surface">
  <p className="text-carnival-red text-xs font-display">Failed to load history</p>
  <p className="text-ink/60 text-[10px] mt-2">{error.message}</p>
  </div>
@@ -150,7 +150,7 @@ export default function HistoryPage() {
  </div>
  ) : (
  <>
- <div className="hidden md:block bg-surface border-2 border-dashed border-ink rounded-sm overflow-hidden">
+ <div className="hidden md:block bg-surface border-2 border-ink rounded-sm overflow-hidden">
  <div className="bg-carnival-red p-4 border-b-2 border-ink flex items-center gap-2 text-white">
  <Star className="fill-gold text-gold"size={20} />
  <h2 className="font-display text-xl tracking-wide">Settled Games</h2>

@@ -221,7 +221,7 @@ export default function MyTicketsPage() {
  { label: 'Total Spent', value: `$${totalSpent.toFixed(2)}`, color: 'text-carnival-red' },
  { label: 'Wins', value: `${wins}`, color: 'text-gold' },
  ].map((stat) => (
- <div key={stat.label} className="bg-surface border-2 border-dashed border-ink p-5 rounded-sm text-center">
+ <div key={stat.label} className="bg-surface border-2 border-ink p-5 rounded-sm text-center">
  <p className="text-ink/50 text-[10px] uppercase tracking-wider font-display mb-1">{stat.label}</p>
  <p className={cn("text-3xl font-display", stat.color)}>{stat.value}</p>
  </div>
