@@ -32,7 +32,7 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"IBM Plex Mono"', 'monospace'],
+        display: ['"Playfair Display"', 'serif'],
         ticket: ['"IBM Plex Mono"', 'monospace'],
         body: ['"IBM Plex Mono"', 'monospace'],
         mono: ['"IBM Plex Mono"', 'monospace'],

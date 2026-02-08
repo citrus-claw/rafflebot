@@ -49,12 +49,12 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
       <div
         className="relative overflow-hidden"
         style={{
-          border: active ? '0.8px dashed #393939' : '0.8px dashed #D4D0C8',
+          border: active ? '0.8px dashed #D4D0C8' : '0.8px dashed #E8E4D8',
           borderRadius: '6px',
           opacity: active ? 1 : 0.75,
         }}
       >
-        <div className="p-5 pr-16">
+        <div className="p-5">
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1 min-w-0">
               <h3 className="text-sm text-text-primary font-bold tracking-tight truncate">
@@ -65,11 +65,11 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
               </p>
             </div>
             <span
-              className="ml-3 shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
+              className="ml-3 shrink-0 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
               style={{
-                color: active ? '#C41E3A' : '#8B8B6E',
-                background: active ? '#C41E3A15' : '#8B8B6E15',
-                border: `0.8px solid ${active ? '#C41E3A40' : '#8B8B6E40'}`,
+                color: active ? '#8B4513' : '#8B8B6E',
+                background: active ? '#8B451310' : '#8B8B6E10',
+                border: `0.8px solid ${active ? '#8B451330' : '#8B8B6E30'}`,
               }}
             >
               {active ? 'Active' : 'Ended'}
@@ -79,7 +79,7 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
               <p className="text-text-secondary text-[10px] uppercase tracking-wider">Prize Pool</p>
-              <p className="text-accent-red font-bold text-lg">{formatUSDC(raffle.totalPot)}</p>
+              <p className="text-text-primary font-bold text-lg">{formatUSDC(raffle.totalPot)}</p>
             </div>
             <div>
               <p className="text-text-secondary text-[10px] uppercase tracking-wider">Per Ticket</p>
@@ -92,35 +92,26 @@ export function MockRaffleCard({ raffle, onClick }: MockRaffleCardProps) {
               <span className="text-text-primary font-bold">{raffle.totalTickets}</span> tickets sold
             </span>
             {active && (
-              <span className="text-accent-red font-semibold">{timeRemaining}</span>
+              <span className="text-text-primary font-semibold">{timeRemaining}</span>
             )}
           </div>
 
           {active && (
             <div className="mt-3">
               <div className="h-1 bg-border-light rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#E8927C' }} />
+                <div className="h-full rounded-full" style={{ width: `${progress}%`, background: '#8B4513' }} />
               </div>
               <p className="text-[10px] text-text-secondary mt-1">{Math.round(progress)}% of min pot</p>
             </div>
           )}
-        </div>
 
-        <div
-          className="absolute top-0 right-0 w-14 h-full flex flex-col items-center justify-center"
-          style={{ borderLeft: '0.8px dashed #393939' }}
-        >
-          <span className="text-[8px] uppercase tracking-[0.15em] font-bold text-text-secondary" style={{ writingMode: 'vertical-rl' }}>
-            ADMIT ONE
-          </span>
+          {raffle.winner && (
+            <div className="mt-4 p-3 rounded" style={{ border: '0.8px solid #B8860B40', background: '#B8860B08' }}>
+              <p className="text-accent-gold text-xs font-bold">Winner</p>
+              <p className="text-text-primary text-[10px] truncate mt-1">{raffle.winner}</p>
+            </div>
+          )}
         </div>
-
-        {raffle.winner && (
-          <div className="mx-5 mb-4 p-3 rounded" style={{ border: '0.8px dashed #B8860B', background: '#B8860B10' }}>
-            <p className="text-accent-gold text-xs font-bold">Winner</p>
-            <p className="text-text-primary text-[10px] truncate mt-1">{raffle.winner}</p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -51,9 +51,8 @@ function HeroSection() {
   return (
     <section className="py-16 md:py-24">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start gap-10 px-4">
-        {/* Left text — StockTaper style: big bold monospace, left-aligned */}
         <div className="flex-1">
-          <h1 className="text-3xl md:text-5xl leading-tight mb-5 text-text-primary font-bold">
+          <h1 className="font-display text-4xl md:text-5xl leading-tight mb-5 text-text-primary font-bold">
             On-chain raffles.
             <br />
             Actually fair.
@@ -65,16 +64,20 @@ function HeroSection() {
             even if you don&apos;t have a blockchain degree.
           </p>
 
-          {/* Stats inline — like StockTaper's "Free to use" area */}
-          <div className="flex gap-6 mb-8">
+          {/* Stats — data callout boxes */}
+          <div className="flex gap-4 mb-8">
             {[
               { value: 'VRF', label: 'Verified Random' },
               { value: '90%', label: 'To Winners' },
               { value: '<1s', label: 'Settlement' },
             ].map((s) => (
-              <div key={s.label}>
-                <p className="text-accent-red font-bold text-lg">{s.value}</p>
-                <p className="text-text-secondary text-[10px] uppercase tracking-wider">{s.label}</p>
+              <div
+                key={s.label}
+                className="px-4 py-3 text-center"
+                style={{ border: '1px solid #D4D0C8', borderRadius: '4px' }}
+              >
+                <p className="font-display font-bold text-xl text-text-primary">{s.value}</p>
+                <p className="text-text-secondary text-[9px] uppercase tracking-wider mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -88,7 +91,6 @@ function HeroSection() {
           </a>
         </div>
 
-        {/* Right illustration — like StockTaper's astronaut */}
         <div className="flex-shrink-0 hidden md:block">
           <RaffleDrum size={260} />
         </div>
@@ -97,7 +99,7 @@ function HeroSection() {
   );
 }
 
-/* ───── Premium Features — like StockTaper's feature cards ───── */
+/* ───── Premium Features ───── */
 function FeaturesSection() {
   const features = [
     {
@@ -112,7 +114,7 @@ function FeaturesSection() {
     },
     {
       illustration: <TentIllustration size={44} />,
-      pill: { text: 'AI', color: '#E8927C' },
+      pill: { text: 'AI', color: '#8B8B6E' },
       title: 'AI AGENT MANAGED',
       bullets: [
         'Autonomous raffle creation',
@@ -122,7 +124,7 @@ function FeaturesSection() {
     },
     {
       illustration: <TrophyIllustration size={44} />,
-      pill: { text: 'ON-CHAIN', color: '#B8860B' },
+      pill: { text: 'ON-CHAIN', color: '#8B8B6E' },
       title: 'FULLY ON-CHAIN',
       bullets: [
         'Every ticket recorded on Solana',
@@ -135,7 +137,7 @@ function FeaturesSection() {
   return (
     <section className="py-12">
       <div className="max-w-5xl mx-auto px-4">
-        <h2 className="text-xl text-text-primary font-bold text-center mb-8">
+        <h2 className="font-display text-2xl text-text-primary font-bold text-center mb-8">
           Premium Features
         </h2>
 
@@ -144,12 +146,11 @@ function FeaturesSection() {
             <div
               key={f.title}
               className="p-5 relative"
-              style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}
+              style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}
             >
-              {/* Pill tag — top right like StockTaper */}
               <span
-                className="absolute top-3 right-3 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
-                style={{ color: f.pill.color, background: `${f.pill.color}15`, border: `0.8px solid ${f.pill.color}40` }}
+                className="absolute top-3 right-3 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded"
+                style={{ color: f.pill.color, background: `${f.pill.color}10`, border: `0.8px solid ${f.pill.color}30` }}
               >
                 {f.pill.text}
               </span>
@@ -172,7 +173,7 @@ function FeaturesSection() {
   );
 }
 
-/* ───── How It Works — numbered steps ───── */
+/* ───── How It Works ───── */
 function HowItWorksSection() {
   const steps = [
     { num: '01', title: 'Create', desc: 'The AI agent creates a raffle with ticket price, duration, and minimum pot.' },
@@ -183,7 +184,7 @@ function HowItWorksSection() {
   return (
     <section id="how-it-works" className="py-12">
       <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-xl text-text-primary font-bold text-center mb-10">
+        <h2 className="font-display text-2xl text-text-primary font-bold text-center mb-10">
           How It Works
         </h2>
 
@@ -191,13 +192,13 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <div key={step.num} className="relative text-center">
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-5 left-[60%] w-[80%]" style={{ borderTop: '0.8px dashed #393939' }} />
+                <div className="hidden md:block absolute top-5 left-[60%] w-[80%]" style={{ borderTop: '1px solid #D4D0C8' }} />
               )}
               <div
                 className="inline-flex items-center justify-center w-10 h-10 mb-3"
-                style={{ border: '0.8px dashed #393939', borderRadius: '50%' }}
+                style={{ border: '1px solid #393939', borderRadius: '50%' }}
               >
-                <span className="font-bold text-accent-red text-xs">{step.num}</span>
+                <span className="font-bold text-text-primary text-xs">{step.num}</span>
               </div>
               <h3 className="text-xs text-text-primary font-bold mb-2 uppercase tracking-wider">{step.title}</h3>
               <p className="text-text-secondary text-[11px] leading-relaxed">{step.desc}</p>
@@ -209,59 +210,59 @@ function HowItWorksSection() {
   );
 }
 
-/* ───── Three Column Section — like StockTaper's Opportunity Radar / Sector Pulse / Market Snapshot ───── */
+/* ───── Three Column Section ───── */
 function InfoColumnsSection() {
   return (
-    <section className="py-12" style={{ borderTop: '0.8px dashed #393939' }}>
+    <section className="py-12" style={{ borderTop: '1px solid #D4D0C8' }}>
       <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-3 gap-6">
-        {/* Raffle Radar — like Opportunity Radar */}
+        {/* Raffle Radar */}
         <div>
-          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+          <h3 className="font-display text-base text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
             Raffle Radar
           </h3>
           <div className="space-y-4">
-            <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+            <div className="p-3" style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}>
               <p className="text-xs text-text-primary font-bold mb-1">Provably Fair Draws</p>
               <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
                 Every winner selected by Switchboard VRF. On-chain entropy ensures no manipulation.
               </p>
               <div className="flex gap-1.5">
                 {['VRF', 'SOLANA'].map((t) => (
-                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#8B8B6E', background: '#8B8B6E15', border: '0.8px solid #8B8B6E40' }}>{t}</span>
+                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#8B8B6E', background: '#8B8B6E10', border: '0.8px solid #8B8B6E30' }}>{t}</span>
                 ))}
               </div>
             </div>
-            <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+            <div className="p-3" style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}>
               <p className="text-xs text-text-primary font-bold mb-1">AI Agent Automation</p>
               <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
                 Autonomous creation, management, and distribution. No human intervention needed.
               </p>
               <div className="flex gap-1.5">
                 {['AI', 'AUTO'].map((t) => (
-                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#E8927C', background: '#E8927C15', border: '0.8px solid #E8927C40' }}>{t}</span>
+                  <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#8B8B6E', background: '#8B8B6E10', border: '0.8px solid #8B8B6E30' }}>{t}</span>
                 ))}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Prize Distribution — like Sector Pulse */}
+        {/* Prize Structure */}
         <div>
-          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+          <h3 className="font-display text-base text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
             Prize Structure
           </h3>
-          <div className="p-3 mb-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+          <div className="p-3 mb-3" style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}>
             <p className="text-xs text-text-primary font-bold mb-1">Winner Takes 90%</p>
             <p className="text-[10px] text-text-secondary leading-relaxed mb-2">
               The vast majority of every pot goes directly to the winner&apos;s wallet. Protocol takes a minimal 10% fee.
             </p>
             <div className="flex gap-1.5">
               {['USDC', 'SPL'].map((t) => (
-                <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#B8860B', background: '#B8860B15', border: '0.8px solid #B8860B40' }}>{t}</span>
+                <span key={t} className="px-1.5 py-0.5 text-[8px] font-bold uppercase rounded" style={{ color: '#8B8B6E', background: '#8B8B6E10', border: '0.8px solid #8B8B6E30' }}>{t}</span>
               ))}
             </div>
           </div>
-          <div className="p-3" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+          <div className="p-3" style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}>
             <p className="text-xs text-text-primary font-bold mb-1">Minimum Pot Protection</p>
             <p className="text-[10px] text-text-secondary leading-relaxed">
               If the minimum pot isn&apos;t reached, all ticket holders receive a full refund. No risk.
@@ -269,9 +270,9 @@ function InfoColumnsSection() {
           </div>
         </div>
 
-        {/* Quick Stats — like Market Snapshot */}
+        {/* Platform Snapshot */}
         <div>
-          <h3 className="text-sm text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
+          <h3 className="font-display text-base text-text-primary font-bold mb-4" style={{ borderBottom: '1.6px solid #393939', paddingBottom: '6px' }}>
             Platform Snapshot
           </h3>
           <div className="space-y-0">
@@ -283,7 +284,7 @@ function InfoColumnsSection() {
               { label: 'Settlement', value: '< 1 second' },
               { label: 'Refund Policy', value: 'Auto if min not met' },
             ].map((item) => (
-              <div key={item.label} className="flex justify-between py-2 text-xs" style={{ borderBottom: '0.8px dashed #D4D0C8' }}>
+              <div key={item.label} className="flex justify-between py-2 text-xs" style={{ borderBottom: '0.8px solid #E8E4D8' }}>
                 <span className="text-text-secondary">{item.label}</span>
                 <span className="text-text-primary font-semibold">{item.value}</span>
               </div>
@@ -303,12 +304,12 @@ function RaffleListSection({ children, isEmpty, loading: isLoading, error: err }
   error?: Error | null;
 }) {
   return (
-    <section id="raffles" className="py-10" style={{ borderTop: '0.8px dashed #393939' }}>
+    <section id="raffles" className="py-10" style={{ borderTop: '1px solid #D4D0C8' }}>
       <div className="flex items-center gap-3 mb-1">
-        <h2 className="text-lg text-text-primary font-bold">Live Raffles</h2>
+        <h2 className="font-display text-xl text-text-primary font-bold">Live Raffles</h2>
         <span
-          className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
-          style={{ color: '#C41E3A', background: '#C41E3A15', border: '0.8px solid #C41E3A40' }}
+          className="px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider rounded"
+          style={{ color: '#8B4513', background: '#8B451310', border: '0.8px solid #8B451330' }}
         >
           Active
         </span>
@@ -321,12 +322,12 @@ function RaffleListSection({ children, isEmpty, loading: isLoading, error: err }
           <RaffleCardSkeleton />
         </div>
       ) : err ? (
-        <div className="text-center py-10" style={{ border: '0.8px dashed #C41E3A', borderRadius: '6px' }}>
-          <p className="text-accent-red text-xs">Failed to load raffles</p>
+        <div className="text-center py-10" style={{ border: '1px solid #D4D0C8', borderRadius: '6px' }}>
+          <p className="text-text-primary text-xs">Failed to load raffles</p>
           <p className="text-text-secondary text-[10px] mt-1">{err.message}</p>
         </div>
       ) : isEmpty ? (
-        <div className="text-center py-14" style={{ border: '0.8px dashed #393939', borderRadius: '6px' }}>
+        <div className="text-center py-14" style={{ border: '1px solid #D4D0C8', borderRadius: '6px' }}>
           <FerrisWheel size={60} className="mx-auto mb-3 opacity-20" />
           <p className="text-text-secondary text-xs">No active raffles right now</p>
           <p className="text-text-secondary text-[10px] mt-1">Check back soon — new raffles created regularly.</p>
@@ -364,7 +365,7 @@ export default function Home() {
           <section className="py-6">
             <div className="flex items-center gap-3 mb-4">
               <TrophyIllustration size={24} />
-              <h2 className="text-base text-text-primary font-bold">Recent Winners</h2>
+              <h2 className="font-display text-lg text-text-primary font-bold">Recent Winners</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {mockEnded.map((raffle) => (
@@ -398,7 +399,7 @@ export default function Home() {
         <section className="py-6">
           <div className="flex items-center gap-3 mb-4">
             <TrophyIllustration size={24} />
-            <h2 className="text-base text-text-primary font-bold">Recent Winners</h2>
+            <h2 className="font-display text-lg text-text-primary font-bold">Recent Winners</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {endedRaffles.map((raffle) => (

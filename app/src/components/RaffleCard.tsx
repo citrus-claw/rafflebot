@@ -50,13 +50,12 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
       <div
         className="relative overflow-hidden"
         style={{
-          border: active ? '0.8px dashed #393939' : '0.8px dashed #D4D0C8',
+          border: active ? '0.8px dashed #D4D0C8' : '0.8px dashed #E8E4D8',
           borderRadius: '6px',
           opacity: active ? 1 : 0.75,
         }}
       >
-        {/* Content area */}
-        <div className="p-5 pr-16">
+        <div className="p-5 group-hover:border-color-[#393939]" style={ active ? { borderColor: undefined } : {}}>
           {/* Header */}
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1 min-w-0">
@@ -68,11 +67,11 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
               </p>
             </div>
             <span
-              className="ml-3 shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
+              className="ml-3 shrink-0 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded"
               style={{
-                color: active ? '#C41E3A' : '#8B8B6E',
-                background: active ? '#C41E3A15' : '#8B8B6E15',
-                border: `0.8px solid ${active ? '#C41E3A40' : '#8B8B6E40'}`,
+                color: active ? '#8B4513' : '#8B8B6E',
+                background: active ? '#8B451310' : '#8B8B6E10',
+                border: `0.8px solid ${active ? '#8B451330' : '#8B8B6E30'}`,
               }}
             >
               {getStatusLabel(raffle.status)}
@@ -83,7 +82,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
               <p className="text-text-secondary text-[10px] uppercase tracking-wider">Prize Pool</p>
-              <p className="text-accent-red font-bold text-lg">{formatUSDC(raffle.totalPot)}</p>
+              <p className="text-text-primary font-bold text-lg">{formatUSDC(raffle.totalPot)}</p>
             </div>
             <div>
               <p className="text-text-secondary text-[10px] uppercase tracking-wider">Per Ticket</p>
@@ -97,7 +96,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
               <span className="text-text-primary font-bold">{raffle.totalTickets}</span> tickets sold
             </span>
             {active && (
-              <span className="text-accent-red font-semibold">
+              <span className="text-text-primary font-semibold">
                 {timeRemaining}
               </span>
             )}
@@ -109,7 +108,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
               <div className="h-1 bg-border-light rounded-full overflow-hidden">
                 <div 
                   className="h-full rounded-full"
-                  style={{ width: `${progress}%`, background: '#E8927C' }}
+                  style={{ width: `${progress}%`, background: '#8B4513' }}
                 />
               </div>
               <p className="text-[10px] text-text-secondary mt-1">
@@ -117,30 +116,17 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
               </p>
             </div>
           )}
-        </div>
 
-        {/* Ticket stub (right side) */}
-        <div
-          className="absolute top-0 right-0 w-14 h-full flex flex-col items-center justify-center"
-          style={{ borderLeft: '0.8px dashed #393939' }}
-        >
-          <span
-            className="text-[8px] uppercase tracking-[0.15em] font-bold text-text-secondary"
-            style={{ writingMode: 'vertical-rl' }}
-          >
-            ADMIT ONE
-          </span>
+          {/* Winner display */}
+          {raffle.winner && (
+            <div className="mt-4 p-3 rounded" style={{ border: '0.8px solid #B8860B40', background: '#B8860B08' }}>
+              <p className="text-accent-gold text-xs font-bold">Winner</p>
+              <p className="text-text-primary text-[10px] truncate mt-1">
+                {raffle.winner.toBase58()}
+              </p>
+            </div>
+          )}
         </div>
-
-        {/* Winner display */}
-        {raffle.winner && (
-          <div className="mx-5 mb-4 p-3 rounded" style={{ border: '0.8px dashed #B8860B', background: '#B8860B10' }}>
-            <p className="text-accent-gold text-xs font-bold">Winner</p>
-            <p className="text-text-primary text-[10px] truncate mt-1">
-              {raffle.winner.toBase58()}
-            </p>
-          </div>
-        )}
       </div>
     </Link>
   );
@@ -152,7 +138,7 @@ export function RaffleCardSkeleton() {
       className="overflow-hidden animate-pulse"
       style={{ border: '0.8px dashed #D4D0C8', borderRadius: '6px' }}
     >
-      <div className="p-5 pr-16">
+      <div className="p-5">
         <div className="flex justify-between items-start mb-4">
           <div>
             <div className="h-4 w-32 bg-border-light rounded" />
@@ -171,7 +157,6 @@ export function RaffleCardSkeleton() {
           </div>
         </div>
       </div>
-      <div className="absolute top-0 right-0 w-14 h-full" style={{ borderLeft: '0.8px dashed #D4D0C8' }} />
     </div>
   );
 }
