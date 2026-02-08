@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-paper selection:bg-carnival-red selection:text-white">
+      <body className="min-h-screen flex flex-col bg-paper selection:bg-carnival-red selection:text-white">
         <WalletProvider>
           {/* Top Striped Border */}
           <div className="h-2 w-full bg-stripes-red" />
