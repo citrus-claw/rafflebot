@@ -10,31 +10,41 @@ const MOCK_MODE = false;
 const mockRaffles = [
   {
     id: "abc123",
-    name: "Weekly USDC Raffle",
+    name: "Solana Summer Jackpot",
     ticketPrice: 5,
-    totalPot: 2500,
+    totalPot: 8750,
     minPot: 10000,
-    totalTickets: 500,
-    endTime: Date.now() + 86400000 * 3,
+    totalTickets: 1750,
+    endTime: Date.now() + 86400000 * 2,
     status: "active" as const,
   },
   {
     id: "def456",
-    name: "Community Giveaway",
-    ticketPrice: 2,
-    totalPot: 800,
+    name: "DeFi Degen Draw",
+    ticketPrice: 10,
+    totalPot: 4200,
     minPot: 5000,
-    totalTickets: 400,
+    totalTickets: 420,
     endTime: Date.now() + 86400000 * 5,
     status: "active" as const,
   },
   {
+    id: "jkl012",
+    name: "Community 50/50",
+    ticketPrice: 2,
+    totalPot: 1640,
+    minPot: 2000,
+    totalTickets: 820,
+    endTime: Date.now() + 86400000 * 1,
+    status: "active" as const,
+  },
+  {
     id: "ghi789",
-    name: "Early Supporter Draw",
-    ticketPrice: 10,
+    name: "Valentine's USDC Drop",
+    ticketPrice: 25,
     totalPot: 15000,
     minPot: 10000,
-    totalTickets: 1500,
+    totalTickets: 600,
     endTime: Date.now() - 86400000,
     status: "ended" as const,
     winner: "7xKX...9pQr",
@@ -75,7 +85,7 @@ function Marquee() {
   );
 }
 
-function Hero() {
+function Hero({ jackpot, loading }: { jackpot: number; loading: boolean }) {
   return (
     <section className="relative overflow-hidden bg-carnival-red py-16 text-center md:py-20">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_60%)]" />
@@ -103,7 +113,9 @@ function Hero() {
               Paid out automatically
             </div>
           </div>
-          <div className="font-display text-4xl text-white">&mdash;</div>
+          <div className="font-display text-4xl text-white">
+            {loading ? '...' : jackpot.toLocaleString()}
+          </div>
           <div className="text-sm font-bold text-white/50">USDC</div>
         </div>
       </div>
@@ -165,9 +177,10 @@ export default function Home() {
     const mockActive = mockRaffles.filter((r) => r.status === 'active');
     const mockEnded = mockRaffles.filter((r) => r.status === 'ended');
 
+    const mockJackpot = mockActive.reduce((sum, r) => sum + r.minPot, 0);
     return (
       <>
-        <Hero />
+        <Hero jackpot={mockJackpot} loading={false} />
         <Marquee />
         <div className="mx-auto max-w-7xl space-y-10 px-6 py-10">
           <RaffleListSection isEmpty={mockActive.length === 0} loading={false}>
@@ -192,9 +205,15 @@ export default function Home() {
     );
   }
 
+  // Jackpot = sum of all active raffle min pots (the target prize pools)
+  const jackpot = activeRaffles.reduce(
+    (sum, r) => sum + r.account.minPot.toNumber() / 1_000_000,
+    0
+  );
+
   return (
     <>
-      <Hero />
+      <Hero jackpot={jackpot} loading={loading} />
       <Marquee />
       <div className="mx-auto max-w-7xl space-y-10 px-6 py-10">
         <RaffleListSection
