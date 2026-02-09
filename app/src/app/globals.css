@@ -21,28 +21,37 @@ body {
   background-size: 20px 20px;
 }
 
+/* === MARQUEE === */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
 /* === WALLET ADAPTER OVERRIDES === */
 .wallet-adapter-button {
-  background: #004E7C !important;
-  border-radius: 0.125rem !important;
+  background: white !important;
+  border-radius: 8px !important;
   font-family: "IBM Plex Mono", monospace !important;
   font-weight: 600 !important;
-  border: 2px solid #1a1a1a !important;
-  color: #FFF8E7 !important;
+  border: none !important;
+  color: #D9381E !important;
   font-size: 11px !important;
-  height: 36px !important;
-  padding: 0 16px !important;
+  height: 32px !important;
+  padding: 0 14px !important;
   line-height: 1 !important;
 }
 
 .wallet-adapter-button:hover {
-  background: #1a1a1a !important;
+  background: rgba(255,255,255,0.85) !important;
 }
 
 .wallet-adapter-modal-wrapper {
   background: #FFF8E7 !important;
   border: 2px solid #1a1a1a !important;
-  border-radius: 0.125rem !important;
+  border-radius: 12px !important;
   font-family: "IBM Plex Mono", monospace !important;
 }
 
@@ -53,8 +62,8 @@ body {
 
 .wallet-adapter-modal-list li {
   background: transparent !important;
-  border: 2px solid #1a1a1a !important;
-  border-radius: 0.125rem !important;
+  border: 1px solid rgba(26,26,26,0.1) !important;
+  border-radius: 8px !important;
   margin-bottom: 4px !important;
 }
 
@@ -65,7 +74,6 @@ body {
 }
 ::-webkit-scrollbar-track {
   background: #F4E4BC;
-  border-left: 2px solid #1a1a1a;
 }
 ::-webkit-scrollbar-thumb {
   background: #D9381E;
