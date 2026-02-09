@@ -4,6 +4,8 @@
 
 Built for the [Colosseum Agent Hackathon](https://www.colosseum.org/) — February 2026
 
+🌐 **Live:** [rafflebot.pages.dev](https://rafflebot.pages.dev) · 🎬 **Demo:** [streamable.com/1r1g8d](https://streamable.com/1r1g8d)
+
 ## 🎯 What is RaffleBot?
 
 RaffleBot is an AI agent that creates and manages trustless raffles on Solana. Users interact via natural language, and the agent handles all blockchain complexity behind the scenes.
@@ -147,7 +149,9 @@ rafflebot/
 
 ## 🎬 Demo
 
-[Demo video coming soon]
+🎬 [Watch the demo video](https://streamable.com/1r1g8d)
+
+🌐 [Try it live](https://rafflebot.pages.dev)
 
 ## 👥 Team
 
