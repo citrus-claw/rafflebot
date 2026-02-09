@@ -15,9 +15,7 @@ import {
   clusterApiUrl 
 } from "@solana/web3.js";
 import { 
-  createMint,
   getOrCreateAssociatedTokenAccount,
-  mintTo,
   TOKEN_PROGRAM_ID 
 } from "@solana/spl-token";
 import * as sb from "@switchboard-xyz/on-demand";
@@ -67,6 +65,49 @@ export interface RaffleInfo {
   endTime: Date;
   status: string;
   winner?: string;
+}
+
+interface EntryAccount {
+  publicKey: PublicKey;
+  account: {
+    buyer: PublicKey;
+    startTicketIndex: number;
+    numTickets: number;
+    refunded?: boolean;
+  };
+}
+
+function findEscrowPda(raffle: PublicKey): PublicKey {
+  const [escrowPda] = PublicKey.findProgramAddressSync(
+    [Buffer.from("escrow"), raffle.toBuffer()],
+    PROGRAM_ID
+  );
+  return escrowPda;
+}
+
+async function fetchEntriesForRaffle(program: Program, rafflePubkey: PublicKey): Promise<EntryAccount[]> {
+  // entry layout: discriminator (8) + raffle pubkey (32) + buyer pubkey...
+  // @ts-ignore - dynamic IDL accounts
+  const entries = await program.account.entry.all([
+    {
+      memcmp: {
+        offset: 8,
+        bytes: rafflePubkey.toBase58(),
+      },
+    },
+  ]);
+  return entries as EntryAccount[];
+}
+
+function pickWinningEntry(entries: EntryAccount[], winningTicket: number): EntryAccount | null {
+  for (const entry of entries) {
+    const start = entry.account.startTicketIndex;
+    const endExclusive = start + entry.account.numTickets;
+    if (winningTicket >= start && winningTicket < endExclusive) {
+      return entry;
+    }
+  }
+  return null;
 }
 
 /**
@@ -265,10 +306,49 @@ export async function drawWinner(raffleAddress: string): Promise<{ success: bool
     // Fetch updated raffle to get winning ticket
     // @ts-ignore
     const raffle = await program.account.raffle.fetch(rafflePubkey);
+    if (raffle.winningTicket === null || raffle.winningTicket === undefined) {
+      throw new Error("Winning ticket not found after settle_draw");
+    }
+
+    const entries = await fetchEntriesForRaffle(program, rafflePubkey);
+    const winningEntry = pickWinningEntry(entries, Number(raffle.winningTicket));
+    if (!winningEntry) {
+      throw new Error(`Unable to locate winning entry for ticket #${raffle.winningTicket}`);
+    }
+
+    const winner = winningEntry.account.buyer as PublicKey;
+    const winnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet,
+      raffle.tokenMint,
+      winner
+    );
+    const platformTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet,
+      raffle.tokenMint,
+      raffle.platformWallet
+    );
+    const escrowPda = findEscrowPda(rafflePubkey);
+
+    const claimSig = await program.methods
+      .claimPrize()
+      .accounts({
+        raffle: rafflePubkey,
+        winnerEntry: winningEntry.publicKey,
+        escrow: escrowPda,
+        winnerTokenAccount: winnerTokenAccount.address,
+        platformTokenAccount: platformTokenAccount.address,
+        tokenMint: raffle.tokenMint,
+        winner,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc();
+    console.log("Prize auto-paid to winner. Tx:", claimSig);
     
     return {
       success: true,
-      winner: `Ticket #${raffle.winningTicket}`,
+      winner: winner.toBase58(),
     };
   } catch (e: any) {
     return { success: false, error: e.message };
@@ -280,7 +360,7 @@ export async function drawWinner(raffleAddress: string): Promise<{ success: bool
  */
 export async function cancelRaffle(raffleAddress: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const { program, wallet } = getProgram();
+    const { program, provider, wallet } = getProgram();
     const rafflePubkey = new PublicKey(raffleAddress);
 
     await program.methods
@@ -290,6 +370,36 @@ export async function cancelRaffle(raffleAddress: string): Promise<{ success: bo
         authority: wallet.publicKey,
       })
       .rpc();
+
+    // Auto-process refunds so users don't need to manually claim in the UI.
+    // @ts-ignore
+    const raffle = await program.account.raffle.fetch(rafflePubkey);
+    const entries = await fetchEntriesForRaffle(program, rafflePubkey);
+    const escrowPda = findEscrowPda(rafflePubkey);
+
+    for (const entry of entries) {
+      if (entry.account.refunded) continue;
+      const buyer = entry.account.buyer as PublicKey;
+      const buyerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        wallet,
+        raffle.tokenMint,
+        buyer
+      );
+
+      await program.methods
+        .claimRefund()
+        .accounts({
+          raffle: rafflePubkey,
+          entry: entry.publicKey,
+          escrow: escrowPda,
+          buyerTokenAccount: buyerTokenAccount.address,
+          tokenMint: raffle.tokenMint,
+          buyer,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .rpc();
+    }
 
     return { success: true };
   } catch (e: any) {

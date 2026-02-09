@@ -294,8 +294,7 @@ export type Rafflebot = {
           "name": "tokenMint"
         },
         {
-          "name": "winner",
-          "signer": true
+          "name": "winner"
         },
         {
           "name": "tokenProgram"
@@ -401,15 +400,10 @@ export type Rafflebot = {
           "writable": true
         },
         {
-          "name": "platformTokenAccount",
-          "writable": true
-        },
-        {
           "name": "tokenMint"
         },
         {
-          "name": "buyer",
-          "signer": true
+          "name": "buyer"
         },
         {
           "name": "tokenProgram"
@@ -786,21 +780,26 @@ export type Rafflebot = {
     },
     {
       "code": 6021,
+      "name": "invalidRandomnessAccountOwner",
+      "msg": "Invalid randomness account owner"
+    },
+    {
+      "code": 6022,
       "name": "randomnessExpired",
       "msg": "Randomness has expired"
     },
     {
-      "code": 6022,
+      "code": 6023,
       "name": "randomnessAlreadyRevealed",
       "msg": "Randomness already revealed"
     },
     {
-      "code": 6023,
+      "code": 6024,
       "name": "randomnessNotResolved",
       "msg": "Randomness not yet resolved"
     },
     {
-      "code": 6024,
+      "code": 6025,
       "name": "drawNotCommitted",
       "msg": "Draw not committed yet"
     }
@@ -979,9 +978,9 @@ export type Rafflebot = {
 // HELPERS
 // ============================================================================
 
-import { PublicKey } from '@solana/web3.js';
-import { BN } from '@coral-xyz/anchor';
-import IDL_JSON from './rafflebot.json';
+import { PublicKey } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
+import IDL_JSON from "./rafflebot.json";
 
 export const IDL = IDL_JSON;
 export const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
@@ -1048,12 +1047,12 @@ export function isCancelled(status: RaffleStatus): boolean {
 }
 
 export function getStatusLabel(status: RaffleStatus): string {
-  if (status.active) return 'Active';
-  if (status.drawCommitted) return 'Drawing...';
-  if (status.drawComplete) return 'Winner Drawn';
-  if (status.claimed) return 'Claimed';
-  if (status.cancelled) return 'Cancelled';
-  return 'Unknown';
+  if (status.active) return "Active";
+  if (status.drawCommitted) return "Drawing...";
+  if (status.drawComplete) return "Winner Drawn";
+  if (status.claimed) return "Claimed";
+  if (status.cancelled) return "Cancelled";
+  return "Unknown";
 }
 
 export function getEntryPDA(raffle: PublicKey, buyer: PublicKey): [PublicKey, number] {

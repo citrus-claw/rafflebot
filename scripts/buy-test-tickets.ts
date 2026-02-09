@@ -14,7 +14,7 @@ import {
 import * as fs from "fs";
 
 const IDL = JSON.parse(fs.readFileSync("./target/idl/rafflebot.json", "utf8"));
-const PROGRAM_ID = new PublicKey("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
+const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 const TEST_USDC = new PublicKey("2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2");
 const RAFFLE_PDA = new PublicKey("8JdXnbF8wJVbetoQcnZmH7Xao7e1oA217EeJsgMdfguL");
 

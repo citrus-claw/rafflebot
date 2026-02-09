@@ -17,12 +17,12 @@ import {
 } from "@solana/web3.js";
 import { 
   getOrCreateAssociatedTokenAccount,
-  mintTo,
   TOKEN_PROGRAM_ID 
 } from "@solana/spl-token";
+import { drawWinner } from "../agent/tools";
 import * as fs from "fs";
 const IDL = JSON.parse(fs.readFileSync("./target/idl/rafflebot.json", "utf8"));
-const PROGRAM_ID = new PublicKey("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
+const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 const TEST_USDC = new PublicKey("2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2");
 
 const INTERACTIVE = process.argv.includes("--interactive");
@@ -191,28 +191,14 @@ async function main() {
     await sleep(waitTime + 2000);
   }
 
-  console.log("\n🎲 Agent: Drawing winner using VRF randomness...");
+  console.log("\n🎲 Agent: Drawing winner using Switchboard VRF...");
   await sleep(1000);
-
-  // Generate "random" bytes (in production, this comes from Switchboard VRF)
-  const blockhash = await connection.getRecentBlockhash();
-  const randomness = Array.from(Buffer.from(blockhash.blockhash).slice(0, 32));
-
-  await program.methods
-    .drawWinner(randomness)
-    .accounts({
-      raffle: rafflePDA,
-      authority: authority.publicKey,
-    })
-    .rpc();
-
-  // @ts-ignore
-  raffle = await program.account.raffle.fetch(rafflePDA);
-  
-  console.log("✅ Winner drawn!");
-  console.log(`\n🏆 WINNING TICKET: #${raffle.winningTicket}`);
-  console.log(`   Randomness: ${Buffer.from(raffle.randomness).toString('hex').slice(0, 16)}...`);
-  console.log(`   Verifiable on-chain!`);
+  const draw = await drawWinner(rafflePDA.toBase58());
+  if (!draw.success) {
+    throw new Error(draw.error ?? "Draw failed");
+  }
+  console.log("✅ Winner drawn and prize paid automatically!");
+  console.log(`\n🏆 WINNER: ${draw.winner}`);
 
   await pause();
 

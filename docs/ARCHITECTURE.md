@@ -36,8 +36,9 @@ RaffleBot is an AI agent that creates and runs provably fair raffles on Solana. 
 │   RaffleBot Program  │  Switchboard VRF                         │
 │   ─────────────────  │  ────────────────                        │
 │   • create_raffle    │  • Request randomness                    │
-│   • buy_entries      │  • Callback with proof                   │
-│   • draw_winner      │  • Verifiable on-chain                   │
+│   • buy_tickets      │  • Callback with proof                   │
+│   • commit_draw      │  • Verifiable on-chain                   │
+│   • settle_draw      │                                          │
 │   • claim_prize      │                                          │
 │   • cancel_raffle    │                                          │
 └──────────────────────┴──────────────────────────────────────────┘
@@ -135,7 +136,7 @@ User: "Buy 5 entries for raffle abc123"
                     │
                     ▼
 ┌─────────────────────────────────────────┐
-│ Agent calls draw_winner:                │
+│ Agent commits + settles draw:           │
 │   • Pass VRF randomness                 │
 │   • Program selects winning index       │
 │   • Raffle status → Completed           │
@@ -152,11 +153,10 @@ User: "Buy 5 entries for raffle abc123"
 └─────────────────────────────────────────┘
 ```
 
-### Flow 4: Claim Prize
+### Flow 4: Automatic Payout
 
 ```
-User: "Claim my prize from raffle abc123"
-   OR: Agent auto-claims if configured
+Draw is settled by agent
                     │
                     ▼
 ┌─────────────────────────────────────────┐
@@ -170,12 +170,13 @@ User: "Claim my prize from raffle abc123"
 ┌─────────────────────────────────────────┐
 │ Agent builds tx:                        │
 │   • claim_prize instruction             │
-│   • Transfer prize to winner            │
+│   • Transfer 90% to winner              │
+│   • Transfer 10% to platform            │
 └─────────────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────┐
-│   "💰 Prize claimed!                    │
+│   "💰 Prize auto-paid!                  │
 │    50 USDC sent to 7xK...4Qp            │
 │    Tx: def...uvw"                       │
 └─────────────────────────────────────────┘
@@ -243,7 +244,7 @@ struct EntrantList {
 3. Agent calls Switchboard requestRandomness
 4. Oracle network generates randomness
 5. Callback writes to VRF result account
-6. Agent reads result, calls draw_winner
+6. Agent reads result, calls settle_draw
 7. Program uses randomness to pick winner
 ```
 

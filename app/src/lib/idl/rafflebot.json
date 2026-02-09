@@ -288,8 +288,7 @@
           "name": "token_mint"
         },
         {
-          "name": "winner",
-          "signer": true
+          "name": "winner"
         },
         {
           "name": "token_program"
@@ -395,15 +394,10 @@
           "writable": true
         },
         {
-          "name": "platform_token_account",
-          "writable": true
-        },
-        {
           "name": "token_mint"
         },
         {
-          "name": "buyer",
-          "signer": true
+          "name": "buyer"
         },
         {
           "name": "token_program"
@@ -780,21 +774,26 @@
     },
     {
       "code": 6021,
+      "name": "InvalidRandomnessAccountOwner",
+      "msg": "Invalid randomness account owner"
+    },
+    {
+      "code": 6022,
       "name": "RandomnessExpired",
       "msg": "Randomness has expired"
     },
     {
-      "code": 6022,
+      "code": 6023,
       "name": "RandomnessAlreadyRevealed",
       "msg": "Randomness already revealed"
     },
     {
-      "code": 6023,
+      "code": 6024,
       "name": "RandomnessNotResolved",
       "msg": "Randomness not yet resolved"
     },
     {
-      "code": 6024,
+      "code": 6025,
       "name": "DrawNotCommitted",
       "msg": "Draw not committed yet"
     }

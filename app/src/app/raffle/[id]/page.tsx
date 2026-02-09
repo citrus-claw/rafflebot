@@ -6,7 +6,6 @@ import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRaffle, useMyEntry } from '@/hooks/useRaffles';
 import { useBuyTickets } from '@/hooks/useBuyTickets';
-import { useClaimPrize } from '@/hooks/useClaimPrize';
 import { getStatusLabel, isActive, isDrawComplete } from '@/lib/idl/rafflebot';
 import Link from 'next/link';
 import { ChevronLeft, Ticket } from 'lucide-react';
@@ -48,11 +47,10 @@ export default function RafflePage() {
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
-  const { publicKey, connected } = useWallet();
+  const { connected } = useWallet();
   const { raffle, loading, error, refetch } = useRaffle(rafflePubkey);
   const { entry, refetch: refetchEntry } = useMyEntry(rafflePubkey);
   const { buyTickets, loading: buying, error: buyError } = useBuyTickets();
-  const { claimPrize, loading: claiming, error: claimError } = useClaimPrize();
 
   useEffect(() => {
     try {
@@ -76,21 +74,7 @@ export default function RafflePage() {
     }
   };
 
-  const handleClaim = async () => {
-    if (!rafflePubkey || !raffle) return;
-    setTxStatus('Claiming prize...');
-    const sig = await claimPrize(rafflePubkey, raffle);
-    if (sig) {
-      setTxStatus(`Prize claimed! Tx: ${sig.slice(0, 8)}...`);
-      refetch();
-    } else {
-      setTxStatus('Claim failed');
-    }
-  };
-
-  const isWinner =
-    raffle?.winner && publicKey && raffle.winner.equals(publicKey);
-  const canClaim = isWinner && raffle && isDrawComplete(raffle.status);
+  const drawComplete = raffle ? isDrawComplete(raffle.status) : false;
 
   if (!rafflePubkey) {
     return (
@@ -246,30 +230,11 @@ export default function RafflePage() {
               </div>
             )}
           </div>
-          {canClaim && (
-            <div className="border-t border-ink/5 p-4">
-              <button
-                onClick={handleClaim}
-                disabled={claiming}
-                className="w-full rounded-xl bg-gold py-3 text-xs font-bold uppercase tracking-wider text-ink transition-colors hover:bg-amber-400 disabled:opacity-50"
-              >
-                {claiming ? 'Claiming...' : 'Claim Prize'}
-              </button>
-              {claimError && (
-                <p className="mt-2 text-center text-[10px] text-carnival-red">
-                  {claimError.message}
-                </p>
-              )}
-            </div>
-          )}
-          {isWinner &&
-            !canClaim &&
-            raffle.status &&
-            'claimed' in raffle.status && (
-              <div className="border-t border-ink/5 p-4 text-center text-[10px] font-bold text-gold">
-                ✓ Prize claimed
-              </div>
-            )}
+          <div className="border-t border-ink/5 p-4 text-center text-[10px] font-bold text-gold">
+            {drawComplete
+              ? 'Payout processing automatically by agent'
+              : 'Prize payout complete'}
+          </div>
         </div>
       )}
 

@@ -68,5 +68,5 @@ Users can also interact via: http://localhost:3000
 ## On-Chain Details
 
 - **Network**: Solana Devnet
-- **Program**: `HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n`
+- **Program**: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
 - **Fee Split**: 90% winner, 10% platform

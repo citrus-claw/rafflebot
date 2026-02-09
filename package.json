@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "AI agent for provably fair Solana raffles",
   "scripts": {
-    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "lint:fix": "prettier \"**/*.{js,ts,tsx,jsx,mjs,cjs,json,md,css}\" --write",
+    "lint": "prettier \"**/*.{js,ts,tsx,jsx,mjs,cjs,json,md,css}\" --check",
     "test": "anchor test",
     "build": "anchor build"
   },

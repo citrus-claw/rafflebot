@@ -10,12 +10,12 @@
 ## Phase 1: Anchor Program ✅
 - [x] create_raffle — USDC entries, threshold model (min_pot)
 - [x] buy_tickets — SPL token transfer to escrow, max_per_wallet enforcement
-- [x] draw_winner — randomness → winning ticket index (placeholder: raw bytes from authority)
+- [x] commit_draw + settle_draw — two-phase Switchboard VRF winner selection
 - [x] claim_prize — 90/10 split (winner/platform), SPL transfer from escrow
 - [x] cancel_raffle — authority can cancel, sets status to Cancelled
-- [x] claim_refund — refunds entry minus 10% platform fee
+- [x] claim_refund — full refunds on cancelled raffles
 - [x] 14 tests covering happy paths + edge cases
-- [x] Deploy to devnet (`HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n`)
+- [x] Deploy to devnet (`HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`)
 - [x] Redeployed with correct program ID
 
 ## Phase 2: Web UI ✅ (mostly)

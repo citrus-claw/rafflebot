@@ -114,7 +114,7 @@ async function main() {
       const result = await drawWinner(address);
 
       if (result.success) {
-        console.log(`✅ Winner drawn: ${result.winner}`);
+        console.log(`✅ Winner drawn and auto-paid: ${result.winner}`);
       } else {
         console.log("❌ Failed:", result.error);
       }
@@ -132,7 +132,7 @@ async function main() {
       const result = await cancelRaffle(address);
 
       if (result.success) {
-        console.log("✅ Raffle cancelled. Refunds are now available.");
+        console.log("✅ Raffle cancelled. Refunds are being auto-processed.");
       } else {
         console.log("❌ Failed:", result.error);
       }

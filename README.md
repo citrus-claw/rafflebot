@@ -96,11 +96,11 @@ After deadline, agent triggers draw:
 - Winning ticket index selected
 - Result stored on-chain (verifiable)
 
-### 4. Claim Prize
-Winner claims via web UI:
+### 4. Automatic Payouts
+Agent auto-settles payouts after draw:
 - 90% of pot to winner
 - 10% platform fee
-- If threshold not met: full refunds
+- If cancelled: full refunds to participants
 
 ## 🔧 Technical Details
 
@@ -110,7 +110,8 @@ Winner claims via web UI:
 |-------------|-------------|
 | `create_raffle` | Initialize new raffle with parameters |
 | `buy_tickets` | Purchase tickets, transfer USDC to escrow |
-| `draw_winner` | Select winner using VRF randomness |
+| `commit_draw` | Commit Switchboard randomness after raffle deadline |
+| `settle_draw` | Reveal randomness and finalize winning ticket |
 | `claim_prize` | Winner withdraws funds |
 | `cancel_raffle` | Authority cancels, enables refunds |
 | `claim_refund` | Participants reclaim funds |
@@ -129,7 +130,7 @@ Winner claims via web UI:
 ## 🌐 Deployed
 
 - **Network**: Solana Devnet
-- **Program ID**: `HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n`
+- **Program ID**: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
 - **Test USDC**: `2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2`
 
 ## 📁 Project Structure

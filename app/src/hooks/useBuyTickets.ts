@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, Transaction } from '@solana/web3.js';
+import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
 import { useProgram } from './useProgram';
@@ -50,7 +50,7 @@ export function useBuyTickets() {
           tokenMint: raffle.tokenMint,
           buyer: publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
-          systemProgram: PublicKey.default, // SystemProgram.programId
+          systemProgram: SystemProgram.programId,
         })
         .instruction();
 

@@ -56,7 +56,7 @@ The frontend is at `app/` — users can:
 ## Program Details
 
 - **Network:** Devnet
-- **Program ID:** `HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n`
+- **Program ID:** `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
 - **Test USDC:** `2BD6xxpUvNSA1KF2FmpUEGVBcoSDepRVCbphWJCkDGK2`
 
 ## How It Works
@@ -68,6 +68,6 @@ The frontend is at `app/` — users can:
 
 ## Important Notes
 
-- Only the authority (agent wallet) can create raffles and draw winners
-- VRF is placeholder for hackathon — production uses Switchboard VRF
+- Agent runs Switchboard VRF commit + settle and auto-pays winners after draw
+- Agent can auto-process refunds for cancelled raffles
 - Refunds available if raffle is cancelled or min pot not met

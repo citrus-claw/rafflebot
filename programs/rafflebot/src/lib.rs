@@ -1,12 +1,19 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 use switchboard_on_demand::accounts::RandomnessAccountData;
+use switchboard_on_demand::{ON_DEMAND_DEVNET_PID, ON_DEMAND_MAINNET_PID, SWITCHBOARD_PROGRAM_ID};
 
 declare_id!("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 
 /// Platform fee: 10% (1000 basis points)
 const PLATFORM_FEE_BPS: u64 = 1000;
 const BPS_DENOMINATOR: u64 = 10000;
+
+fn is_valid_switchboard_owner(owner: &Pubkey) -> bool {
+    owner == &ON_DEMAND_DEVNET_PID
+        || owner == &ON_DEMAND_MAINNET_PID
+        || owner == &SWITCHBOARD_PROGRAM_ID
+}
 
 #[program]
 pub mod rafflebot {
@@ -102,12 +109,22 @@ pub mod rafflebot {
             entry.start_ticket_index = raffle.total_tickets;
             entry.num_tickets = 0;
             entry.is_initialized = true;
+            entry.refunded = false;
             entry.bump = ctx.bumps.entry;
         }
-        
-        entry.num_tickets += num_tickets;
-        raffle.total_tickets += num_tickets;
-        raffle.total_pot += total_cost;
+
+        entry.num_tickets = entry
+            .num_tickets
+            .checked_add(num_tickets)
+            .ok_or(RaffleError::Overflow)?;
+        raffle.total_tickets = raffle
+            .total_tickets
+            .checked_add(num_tickets)
+            .ok_or(RaffleError::Overflow)?;
+        raffle.total_pot = raffle
+            .total_pot
+            .checked_add(total_cost)
+            .ok_or(RaffleError::Overflow)?;
 
         msg!("{} bought {} tickets | Total: {} | Pot: {}", 
             ctx.accounts.buyer.key(), num_tickets, raffle.total_tickets, raffle.total_pot);
@@ -126,6 +143,10 @@ pub mod rafflebot {
         require!(clock.unix_timestamp >= raffle.end_time, RaffleError::RaffleNotEnded);
         require!(raffle.total_tickets > 0, RaffleError::NoTickets);
         require!(raffle.total_pot >= raffle.min_pot, RaffleError::ThresholdNotMet);
+        require!(
+            is_valid_switchboard_owner(ctx.accounts.randomness_account.owner),
+            RaffleError::InvalidRandomnessAccountOwner
+        );
 
         // Parse Switchboard randomness account to verify it's been committed
         let randomness_data = RandomnessAccountData::parse(
@@ -170,6 +191,10 @@ pub mod rafflebot {
             ctx.accounts.randomness_account.key() == stored_randomness_account,
             RaffleError::InvalidRandomnessAccount
         );
+        require!(
+            is_valid_switchboard_owner(ctx.accounts.randomness_account.owner),
+            RaffleError::InvalidRandomnessAccountOwner
+        );
 
         // Parse and get revealed randomness
         let randomness_data = RandomnessAccountData::parse(
@@ -211,11 +236,15 @@ pub mod rafflebot {
         require!(raffle.status == RaffleStatus::DrawComplete, RaffleError::DrawNotComplete);
         
         let winning_ticket = raffle.winning_ticket.ok_or(RaffleError::NoWinnerDrawn)?;
+        let entry_end_exclusive = entry
+            .start_ticket_index
+            .checked_add(entry.num_tickets)
+            .ok_or(RaffleError::Overflow)?;
         
         // Verify this entry contains the winning ticket
         require!(
             winning_ticket >= entry.start_ticket_index &&
-            winning_ticket < entry.start_ticket_index + entry.num_tickets,
+            winning_ticket < entry_end_exclusive,
             RaffleError::NotWinner
         );
         require!(entry.buyer == ctx.accounts.winner.key(), RaffleError::NotWinner);
@@ -314,17 +343,9 @@ pub mod rafflebot {
         require!(entry.buyer == ctx.accounts.buyer.key(), RaffleError::NotEntryOwner);
         require!(!entry.refunded, RaffleError::AlreadyRefunded);
 
-        // Calculate refund minus platform fee
-        let gross_amount = raffle.ticket_price
+        // Full refund for cancelled raffles
+        let refund_amount = raffle.ticket_price
             .checked_mul(entry.num_tickets as u64)
-            .ok_or(RaffleError::Overflow)?;
-        let platform_fee = gross_amount
-            .checked_mul(PLATFORM_FEE_BPS)
-            .ok_or(RaffleError::Overflow)?
-            .checked_div(BPS_DENOMINATOR)
-            .ok_or(RaffleError::Overflow)?;
-        let refund_amount = gross_amount
-            .checked_sub(platform_fee)
             .ok_or(RaffleError::Overflow)?;
 
         let raffle_key = raffle.key();
@@ -350,25 +371,11 @@ pub mod rafflebot {
         );
         transfer_checked(cpi_ctx, refund_amount, decimals)?;
 
-        // Transfer platform fee
-        let cpi_accounts = TransferChecked {
-            from: ctx.accounts.escrow.to_account_info(),
-            to: ctx.accounts.platform_token_account.to_account_info(),
-            mint: ctx.accounts.token_mint.to_account_info(),
-            authority: ctx.accounts.escrow.to_account_info(),
-        };
-        let cpi_ctx = CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            cpi_accounts,
-            signer,
-        );
-        transfer_checked(cpi_ctx, platform_fee, decimals)?;
-
         // Mark as refunded
         let entry = &mut ctx.accounts.entry;
         entry.refunded = true;
 
-        msg!("Refund claimed: {} | Refund: {} | Fee: {}", ctx.accounts.buyer.key(), refund_amount, platform_fee);
+        msg!("Refund claimed: {} | Refund: {}", ctx.accounts.buyer.key(), refund_amount);
 
         Ok(())
     }
@@ -532,7 +539,8 @@ pub struct ClaimPrize<'info> {
     )]
     pub token_mint: InterfaceAccount<'info, Mint>,
 
-    pub winner: Signer<'info>,
+    /// CHECK: Winner pubkey used for entry PDA derivation and token-account owner checks
+    pub winner: UncheckedAccount<'info>,
     pub token_program: Interface<'info, TokenInterface>,
 }
 
@@ -579,18 +587,12 @@ pub struct ClaimRefund<'info> {
     pub buyer_token_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        mut,
-        constraint = platform_token_account.owner == raffle.platform_wallet,
-        constraint = platform_token_account.mint == raffle.token_mint,
-    )]
-    pub platform_token_account: InterfaceAccount<'info, TokenAccount>,
-
-    #[account(
         constraint = token_mint.key() == raffle.token_mint,
     )]
     pub token_mint: InterfaceAccount<'info, Mint>,
 
-    pub buyer: Signer<'info>,
+    /// CHECK: Buyer pubkey used for entry PDA derivation and token-account owner checks
+    pub buyer: UncheckedAccount<'info>,
     pub token_program: Interface<'info, TokenInterface>,
 }
 
@@ -693,6 +695,8 @@ pub enum RaffleError {
     AlreadyRefunded,
     #[msg("Invalid randomness account")]
     InvalidRandomnessAccount,
+    #[msg("Invalid randomness account owner")]
+    InvalidRandomnessAccountOwner,
     #[msg("Randomness has expired")]
     RandomnessExpired,
     #[msg("Randomness already revealed")]

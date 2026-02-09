@@ -16,7 +16,7 @@ import {
 import * as fs from "fs";
 
 const IDL = JSON.parse(fs.readFileSync("./target/idl/rafflebot.json", "utf8"));
-const PROGRAM_ID = new PublicKey("HPwwzQZ3NSQ5wcy2jfiBF9GZsGWksw6UbjUxJbaetq7n");
+const PROGRAM_ID = new PublicKey("HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU");
 
 async function main() {
   // Load wallet

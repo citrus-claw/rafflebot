@@ -1,0 +1,11 @@
+node_modules
+app/node_modules
+app/.next
+.anchor
+app/.agents
+app/.claude
+app/skills
+target
+dist
+coverage
+*.lock
