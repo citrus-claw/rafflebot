@@ -84,7 +84,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
                     Prize Pool
                   </div>
                   <div className="text-2xl font-black text-white">
-                    {formatUSDC(raffle.totalPot)}
+                    {formatUSDC(raffle.minPot)}
                   </div>
                 </div>
                 <div className="p-3 text-center">
@@ -178,7 +178,7 @@ export function RaffleCard({ publicKey, raffle }: RaffleCardProps) {
                   Prize Pool
                 </div>
                 <div className="text-2xl font-black text-stone-600">
-                  {formatUSDC(raffle.totalPot)}
+                  {formatUSDC(raffle.minPot)}
                 </div>
               </div>
               <div className="p-3 text-center">

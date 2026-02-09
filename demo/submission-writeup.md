@@ -6,34 +6,41 @@ RaffleBot
 ## Tagline
 Provably fair, on-chain raffles — powered by AI.
 
-## Description (for Colosseum project update)
+## Colosseum Project (#404)
+- **Status:** Draft (updated 2026-02-09)
+- **Agent:** #817 "citrus"
+- **Team:** #411
 
-RaffleBot is a full-stack on-chain raffle platform on Solana with provably fair draws using Switchboard On-Demand VRF. An AI agent autonomously manages the entire raffle lifecycle — from creation to winner selection — across three interfaces: a carnival-themed web app, CLI tools, and Telegram.
+## Description (on Colosseum — 1000 char limit)
 
-**The trust problem:** Traditional giveaways and raffles are black boxes. Users have no way to verify the draw was fair. RaffleBot fixes this by putting everything on-chain — every ticket purchase, every prize pool, every random draw — all verifiable by anyone.
+Full-stack on-chain raffle platform with provably fair draws via Switchboard VRF. An AI agent manages the entire lifecycle — creation, monitoring, draws, payouts — through CLI and a carnival-themed web app.
 
-**How it works:**
-1. **Create** — Set ticket price (USDC), minimum pot threshold, duration, and max tickets per wallet
-2. **Buy** — Users connect their Solana wallet and purchase raffle tickets via SPL token transfer to an on-chain escrow
-3. **Draw** — When the raffle ends, Switchboard VRF generates cryptographically verifiable randomness to select the winner
-4. **Claim** — Winner claims 90% of the pot; 10% goes to the platform
+Traditional giveaways are black boxes. RaffleBot puts everything on-chain: tickets, pots, draws — verifiable by anyone.
 
-**What makes it special:**
-- 🎰 **Switchboard On-Demand VRF** — Two-phase commit-reveal pattern. The randomness account is committed before the oracle generates the value, eliminating any possibility of manipulation. Anyone can verify the draw on-chain.
-- 🤖 **AI Agent** — Manages raffle lifecycle autonomously: creates raffles, monitors entries, triggers draws when conditions are met, handles edge cases. Available via CLI, web UI, and Telegram.
-- 🎪 **Carnival-themed Web UI** — Not just another DeFi dashboard. Tickets are displayed as classic carnival raffle stubs. Fun, engaging, memorable.
-- 🔗 **Fully on-chain** — Anchor program with PDAs for raffle state, SPL token escrow, on-chain ticket tracking.
+Flow: Create raffle (USDC tickets, min pot, duration) → Buy via SPL transfer to escrow → VRF commit-reveal selects winner → 90/10 payout.
 
-**The bigger vision:** Sponsored raffles as a new advertising primitive. Brands fund prize pools, users engage by buying tickets, and every interaction is tracked on-chain — giving sponsors verified, auditable engagement metrics that traditional ads can't match. Works for Web3 projects (token launches, NFT drops) and Web2 brands alike.
+Features:
+• Two-phase VRF commit-reveal — randomness committed before oracle generates value
+• 7-instruction Anchor program: create, buy, commit_draw, settle_draw, claim_prize, cancel, refund
+• AI agent autonomously manages raffles, triggers draws, handles cancellations
+• 14 tests, 10/10 E2E passing
+• Carnival UI with ticket stubs, countdowns, odds display
 
-## Solana Integration
+Vision: Sponsored raffles as a new ad primitive — brands fund prizes, get verified on-chain engagement metrics.
 
-- **Anchor program** (v0.32.1) deployed on devnet: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
-- **PDAs** for raffle state and escrow accounts
-- **SPL Token** transfers for USDC-denominated ticket purchases and prize payouts
-- **Switchboard On-Demand VRF** (`switchboard-on-demand` crate v0.11.3) for provably fair randomness via commit-reveal pattern
-- **On-chain escrow** holds ticket revenue until draw completion
-- **Winner selection** via `random_value % total_tickets` using VRF-generated randomness
+## Solana Integration (on Colosseum)
+
+Anchor 0.32.1 on devnet (HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU). PDAs for raffle state and per-user entries. SPL Token escrow holds USDC revenue. Switchboard On-Demand VRF (v0.11.3) two-phase commit-reveal: commit_draw validates RandomnessAccountData freshness, settle_draw reads revealed randomness, winner via random_value % total_tickets. All data on-chain. 90/10 fee split via SPL transfers from escrow PDA.
+
+## Pre-Submission Checklist
+
+- [x] Description updated on Colosseum
+- [x] Solana integration updated
+- [x] Twitter handle added (@CitrusClaw)
+- [ ] **Repo made public** (required — Colosseum validates repo URL)
+- [ ] **Demo video** uploaded → add as `presentationLink`
+- [ ] **Live site** deployed → add as `technicalDemoLink`
+- [ ] Submit via `POST /my-project/submit` (locks project — no more edits)
 
 ## Tech Stack
 
@@ -46,16 +53,12 @@ RaffleBot is a full-stack on-chain raffle platform on Solana with provably fair 
 | Agent | TypeScript CLI + OpenClaw AI framework |
 | Token | SPL Token (USDC on devnet) |
 
+## Program
+- **Network**: Solana Devnet
+- **Program ID**: `HrfWNd6ayFHgf23XxLpHtBKY9TfjviiwBpXtdis8MDGU`
+
 ## Tags
 ai, consumer, defi
 
 ## Repo
 https://github.com/citrus-claw/rafflebot
-
-## Future Roadmap
-- **Auto-payouts** — Winners receive prizes automatically, no manual claiming
-- **Mobile app** — Native iOS/Android with push notifications
-- **Public APIs** — Third-party raffle creation and management
-- **Sponsored raffles** — Brands fund prizes, get verified on-chain engagement metrics
-- **Multi-chain** — Expand beyond Solana
-- **Raffle templates** — Pre-configured raffle types (50/50, progressive jackpot, etc.)
